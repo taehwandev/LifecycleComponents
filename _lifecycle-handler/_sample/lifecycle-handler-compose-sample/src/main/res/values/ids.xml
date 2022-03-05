@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="top_app_bar" type="id" />
+    <item name="share" type="id" />
+    <item name="button1" type="id" />
+    <item name="button2" type="id" />
+</resources>

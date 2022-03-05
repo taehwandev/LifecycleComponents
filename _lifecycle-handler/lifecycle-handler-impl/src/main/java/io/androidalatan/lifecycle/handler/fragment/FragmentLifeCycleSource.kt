@@ -1,0 +1,3 @@
+package io.androidalatan.lifecycle.handler.fragment
+
+class FragmentLifeCycleSource
