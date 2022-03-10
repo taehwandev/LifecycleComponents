@@ -77,44 +77,25 @@ class ComposeLocalProcessor(
             AnnotationSpec.builder(COMPOSABLE)
                 .build()
 
+        val contentParameterSpec = composableContentSpec(composableSpec)
+
         val array = properties.filter { it.parentDeclaration == owner }
             .map { it.toClassName() }
             .map { propertyClassName ->
-                "${propertyClassName.simpleName}ProviderValue(owner.${propertyClassName.simpleName})"
+                "${propertyClassName.simpleName}ProviderValue(${propertyClassName.simpleName})"
             }
             .toTypedArray()
 
-        val contentParameterSpec = composableContentSpec(composableSpec)
-        val ownerParamSpec = ownerParamSpec(ownerClassName)
-
-        if (isLifecycleOwner(owner)) {
-            fileSpecBuilder.addFunction(
-                FunSpec.builder("${owner.simpleName.asString()}ComposeLocalProvider")
-                    .addAnnotation(composableSpec)
-                    .addModifiers(KModifier.INTERNAL)
-                    .addParameter(contentParameterSpec)
-                    .addStatement("val owner =  LocalLifecycleOwner.current as ${ownerClassName.canonicalName}")
-                    .addStatement(
-                        "${COMPOSITION_LOCAL_PROVIDER.simpleName}(${
-                            array.map { "\n%L" }
-                                .joinToString { it }
-                        }, \ncontent = %N\n)",
-                        *array,
-                        contentParameterSpec
-                    )
-                    .build()
-            )
-        }
-
         fileSpecBuilder.addFunction(
-            FunSpec.builder("${owner.simpleName.asString()}ComposeLocalProviderWithOwner")
+            FunSpec.builder("ComposeLocalProvider")
                 .addAnnotation(composableSpec)
                 .addModifiers(KModifier.INTERNAL)
-                .addParameter(ownerParamSpec)
+                .receiver(ownerClassName)
                 .addParameter(contentParameterSpec)
                 .addStatement(
                     "${COMPOSITION_LOCAL_PROVIDER.simpleName}(${
-                        array.map { "\n%L" }
+                        array
+                            .map { "\n%L" }
                             .joinToString { it }
                     }, \ncontent = %N\n)",
                     *array,
@@ -165,7 +146,7 @@ class ComposeLocalProcessor(
 
     class ProvidedComposeLocalVisitor(
         private val codeGenerator: CodeGenerator,
-        private val logger: KSPLogger
+        @Suppress("unused") private val logger: KSPLogger
     ) : KSVisitorVoid() {
 
         override fun visitPropertyDeclaration(property: KSPropertyDeclaration, data: Unit) {
