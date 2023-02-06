@@ -6,7 +6,7 @@ plugins {
 dependencies {
     api(projects.viewEventApi)
 
-    compileOnly(libs.androidx.annotation)
+    implementation(libs.androidx.annotation)
     implementation(libs.androidx.collection)
     implementation(libs.androidx.compat)
     implementation(libs.androidx.databinding.runtime)

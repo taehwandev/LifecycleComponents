@@ -5,5 +5,5 @@ plugins {
 
 dependencies {
     api(projects.viewEventApi)
-    compileOnly(libs.androidx.annotation)
+    implementation(libs.androidx.annotation)
 }

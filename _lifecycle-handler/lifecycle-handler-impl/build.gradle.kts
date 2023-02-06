@@ -8,7 +8,7 @@ dependencies {
     api(projects.lifecycleHandlerAnnotations)
     api(projects.lifecycleHandlerInvokeadapterApi)
 
-    compileOnly(libs.androidx.annotation)
+    implementation(libs.androidx.annotation)
     implementation(libs.common.rxjava)
     implementation(libs.common.coroutine)
     implementation(libs.alatan.coroutine.dispatcher.api)

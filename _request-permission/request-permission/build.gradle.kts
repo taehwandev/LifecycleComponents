@@ -8,7 +8,6 @@ dependencies {
     implementation(projects.lazyProvider)
     implementation(libs.androidx.compat)
 
-    testImplementation(libs.test.powermock.core)
-    testImplementation(libs.test.powermock.junit4)
-    testImplementation(libs.test.powermock.mockito)
+    testImplementation(libs.test.junit4)
+    testImplementation(libs.test.mockito)
 }
