@@ -5,9 +5,6 @@ import android.net.Uri
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 import io.androidalatan.router.api.DeepLinkJourneyGuidance
 import io.androidalatan.router.api.GuidanceBuilderFactory
 import io.androidalatan.router.api.JourneyFinder
@@ -17,6 +14,9 @@ import org.junit.Test
 import org.junit.jupiter.api.Assertions
 import org.junit.runner.RunWith
 import org.mockito.Mockito
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.powermock.api.mockito.PowerMockito
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner

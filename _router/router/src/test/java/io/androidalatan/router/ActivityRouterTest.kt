@@ -3,8 +3,6 @@ package io.androidalatan.router
 import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.FragmentActivity
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import io.androidalatan.bundle.api.BundleData
 import io.androidalatan.router.api.DeepLinkJourneyGuidance
 import io.androidalatan.router.api.GuidanceBuilderFactory
@@ -15,6 +13,8 @@ import io.androidalatan.router.api.journey.Journey
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 
 class ActivityRouterTest {
 

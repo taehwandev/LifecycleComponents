@@ -7,14 +7,6 @@ object LifecycleLintConsts {
         "io.androidalatan.lifecycle.handler.annotations.async.StartedToStop",
     )
 
-    val RX_JAVA = listOf(
-        "io.reactivex.rxjava3.core.Observable",
-        "io.reactivex.rxjava3.core.Single",
-        "io.reactivex.rxjava3.core.Maybe",
-        "io.reactivex.rxjava3.core.Flowable",
-        "io.reactivex.rxjava3.core.Completable",
-    )
-
     val COROUTINE = listOf(
         "kotlinx.coroutines.flow.Flow"
     )

@@ -16,7 +16,7 @@ class LifecycleLintIssueRegistry : IssueRegistry() {
         internal val ISSUE_RETURN_TYPE = Issue.create(
             id = "Lifecycle-Annotation-ReturnType",
             briefDescription = "Async Lifecycle Annotation should have return type",
-            explanation = "RxJava, Flow return type",
+            explanation = "Flow return type",
             category = Category.MESSAGES,
             priority = 5,
             severity = Severity.WARNING,

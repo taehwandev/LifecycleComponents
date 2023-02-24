@@ -29,7 +29,7 @@ internal class LifecycleAnnotationHandler(private val context: JavaContext) : UE
 
         val correctReturnType = node.returnTypeReference?.getQualifiedName()
             ?.let { returnTypeName ->
-                returnTypeName in LifecycleLintConsts.RX_JAVA || returnTypeName in LifecycleLintConsts.COROUTINE
+                returnTypeName in LifecycleLintConsts.COROUTINE
             }
             ?: false
 
@@ -37,7 +37,7 @@ internal class LifecycleAnnotationHandler(private val context: JavaContext) : UE
             context.report(
                 issue = LifecycleLintIssueRegistry.ISSUE_RETURN_TYPE,
                 location = context.getLocation(node),
-                message = "Async Annotated method should have one of these return type : RxJava or Flow"
+                message = "Async Annotated method should have one of these return type : Flow"
             )
         }
 

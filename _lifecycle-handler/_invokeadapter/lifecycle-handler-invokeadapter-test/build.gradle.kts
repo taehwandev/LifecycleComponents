@@ -7,6 +7,5 @@ dependencies {
     api(libs.androidx.lifecycle.common)
     api(projects.lifecycleHandlerInvokeadapterApi)
     api(projects.lifecycleHandlerInvokeadapterFlow)
-    api(projects.lifecycleHandlerInvokeadapterRx)
     api(libs.test.junit5)
 }

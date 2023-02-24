@@ -225,7 +225,7 @@ formatting:
   #    autoCorrect: true
   NoConsecutiveBlankLines:
     active: true
-  #    autoCorrect: true
+    autoCorrect: true
   NoEmptyClassBody:
     active: true
   #    autoCorrect: true
@@ -252,7 +252,7 @@ formatting:
   #    autoCorrect: true
   NoUnusedImports:
     active: true
-  #    autoCorrect: true
+    autoCorrect: true
   NoWildcardImports:
     active: true
   PackageName:

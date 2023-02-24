@@ -30,7 +30,7 @@ internal class InvokerManagerImplTest {
         syncInvokerManager.reset()
         asyncInvokerManager.reset()
 
-        val asyncLifecycleListener = MockRxLifecycleListener()
+        val asyncLifecycleListener = MockFlowLifecycleListener()
         val methodsOfAsync = analyzer.analyze(asyncLifecycleListener)
         manager.addMethods(asyncLifecycleListener, methodsOfAsync.toList())
         Assertions.assertEquals(0, syncInvokerManager.addMethodCount)
@@ -47,7 +47,7 @@ internal class InvokerManagerImplTest {
         syncInvokerManager.reset()
         asyncInvokerManager.reset()
 
-        val asyncLifecycleListener = MockRxLifecycleListener()
+        val asyncLifecycleListener = MockFlowLifecycleListener()
         manager.removeMethodsOf(asyncLifecycleListener)
         Assertions.assertEquals(1, syncInvokerManager.removeMethodCount)
         Assertions.assertEquals(1, asyncInvokerManager.removeMethodCount)

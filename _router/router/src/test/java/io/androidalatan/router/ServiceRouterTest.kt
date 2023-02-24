@@ -3,7 +3,6 @@ package io.androidalatan.router
 import android.app.Service
 import android.content.Intent
 import android.net.Uri
-import org.mockito.kotlin.mock
 import io.androidalatan.router.api.DeepLinkJourneyGuidance
 import io.androidalatan.router.api.GuidanceBuilderFactory
 import io.androidalatan.router.api.JourneyFinder
@@ -12,6 +11,7 @@ import io.androidalatan.router.api.journey.Journey
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.mockito.kotlin.mock
 
 class ServiceRouterTest {
 

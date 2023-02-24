@@ -2,10 +2,10 @@ package io.androidalatan.router.visitor
 
 import android.app.Service
 import androidx.fragment.app.Fragment
-import org.mockito.kotlin.verify
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.mockito.kotlin.verify
 
 class ServiceVisitorTest {
 

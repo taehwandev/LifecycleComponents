@@ -9,5 +9,7 @@ dependencies {
     api(libs.common.coroutine)
 
     testImplementation(projects.backKeyHandlerAssertion)
-    testImplementation(projects.coroutineTestUtil)
+    testImplementation(libs.test.turbine)
+    testImplementation(libs.test.coroutineTest)
+
 }

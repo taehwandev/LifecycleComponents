@@ -16,13 +16,11 @@ dependencyResolutionManagement {
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "LifecycleComponents"
-include(":coroutine-test-util")
 
 // view interaction
 include(
     ":view-event-api",
     ":view-event-adapter-flow",
-    ":view-event-adapter-rx",
     ":view-event-assertion",
     ":view-event-viewinteractionstream",
     ":view-event-legacy-impl",
@@ -36,7 +34,6 @@ include(
     ":bundle-collector-api",
     ":bundle-collector",
     ":bundle-collector-assertion",
-    ":bundle-collector-rx-adapter",
     ":bundle-collector-flow-adapter",
 )
 
@@ -53,7 +50,6 @@ include(
     ":request-permission-api",
     ":request-permission",
     ":request-permission-flow-handler",
-    ":request-permission-rx-handler",
     ":request-permission-assertion",
 )
 
@@ -63,7 +59,6 @@ include(
     ":back-key-handler",
     ":back-key-handler-assertion",
     ":back-key-handler-adapter-flow",
-    ":back-key-handler-adapter-rx",
 )
 
 // result handler
@@ -72,7 +67,6 @@ include(
     ":result-handler",
     ":result-handler-assertion",
     ":result-handler-flow-adapter",
-    ":result-handler-rx-adapter",
 )
 
 // lifecycle handler
@@ -81,7 +75,6 @@ include(
     ":lifecycle-handler-annotations",
     ":lifecycle-handler-assertion",
     ":lifecycle-handler-invokeadapter-api",
-    ":lifecycle-handler-invokeadapter-rx",
     ":lifecycle-handler-invokeadapter-flow",
     ":lifecycle-handler-invokeadapter-test",
     ":lifecycle-handler-impl",

@@ -7,5 +7,6 @@ dependencies {
     api(libs.common.coroutine)
     api(projects.bundleCollectorApi)
     testImplementation(projects.bundleCollectorAssertion)
-    testImplementation(projects.coroutineTestUtil)
+    testImplementation(libs.test.turbine)
+    testImplementation(libs.test.coroutineTest)
 }

@@ -7,7 +7,6 @@ import io.androidalatan.datastore.preference.PreferencesBuilder
 import io.androidalatan.lifecycle.handler.activity.LifecycleActivity
 import io.androidalatan.lifecycle.handler.sample.adapter.PersonAdapter
 import io.androidalatan.lifecycle.handler.sample.prefs.SamplePrefs
-import io.androidalatan.rx.scheduler.api.SchedulerProvider
 import io.androidalatan.view.event.api.ViewAccessor
 
 class LifecycleSampleActivity : LifecycleActivity() {
@@ -15,7 +14,6 @@ class LifecycleSampleActivity : LifecycleActivity() {
         get() = R.layout.sample_activity
 
     override fun viewInit(viewAccessor: ViewAccessor) {
-        val schedulerProvider = SchedulerProvider()
         val dispatcherProvider = DispatcherProvider()
         val adapter = PersonAdapter()
 
@@ -26,7 +24,6 @@ class LifecycleSampleActivity : LifecycleActivity() {
         val viewModel = SampleViewModel(
             this,
             this,
-            schedulerProvider,
             dispatcherProvider,
             adapter,
             samplePrefs

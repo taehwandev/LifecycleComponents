@@ -9,5 +9,4 @@ dependencies {
     api(projects.lifecycleHandlerInvokeadapterApi)
 
     testImplementation(libs.test.coroutineTest)
-    testImplementation(libs.common.rxjava)
 }

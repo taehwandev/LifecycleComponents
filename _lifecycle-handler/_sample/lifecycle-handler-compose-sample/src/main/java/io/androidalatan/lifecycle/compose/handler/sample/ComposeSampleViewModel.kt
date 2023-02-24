@@ -9,16 +9,13 @@ import io.androidalatan.view.event.api.ViewInteractionStream
 import io.androidalatan.view.event.api.toolbar.ToolbarEvent
 import io.androidalatan.view.event.api.view.OnSizeChangeEvent
 import io.androidalatan.view.event.legacy.flow.asFlow
+import io.androidalatan.view.event.legacy.flow.toolbar.onMenuItemClickAsFlow
 import io.androidalatan.view.event.legacy.flow.view.onClickAsFlow
 import io.androidalatan.view.event.legacy.flow.view.onSizeChangeAsFlow
-import io.androidalatan.view.event.legacy.rx.asObservable
-import io.androidalatan.view.event.legacy.rx.toolbar.onMenuItemClickAsObservable
-import io.androidalatan.view.event.legacy.rx.view.onClickAsObservable
-import io.androidalatan.view.event.legacy.rx.view.onSizeChangeAsObservable
-import io.reactivex.rxjava3.core.Observable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
@@ -28,35 +25,35 @@ class ComposeSampleViewModel(lifecycleSource: LifecycleSource) : LifecycleListen
     internal val clickedCount: MutableLiveData<Int> = MutableLiveData(0)
 
     @ResumedToPause
-    fun observeClick(rxViewInteractionStream: ViewInteractionStream): Observable<Long> {
-        return rxViewInteractionStream.asObservable()
-            .switchMap { view ->
+    fun observeClick(rxViewInteractionStream: ViewInteractionStream): Flow<Long> {
+        return rxViewInteractionStream.asFlow()
+            .flatMapLatest { view ->
                 view.find(R.id.button1)
-                    .onClickAsObservable()
-                    .doOnNext { clickedCount.value = clickedCount.value!! + 1 }
+                    .onClickAsFlow()
+                    .onEach { clickedCount.value = clickedCount.value!! + 1 }
             }
     }
 
     @ResumedToPause
-    fun observeShareClick(rxViewInteractionStream: ViewInteractionStream): Observable<Int> {
-        return rxViewInteractionStream.asObservable()
-            .switchMap { view ->
+    fun observeShareClick(rxViewInteractionStream: ViewInteractionStream): Flow<Int> {
+        return rxViewInteractionStream.asFlow()
+            .flatMapLatest { view ->
                 view.find(R.id.top_app_bar, ToolbarEvent::class.java)
-                    .onMenuItemClickAsObservable()
+                    .onMenuItemClickAsFlow()
                     .filter { menuId -> menuId == R.id.share }
-                    .doOnNext {
+                    .onEach {
                         Log.d(TAG, "observeShareClick: ShareMenu Clicked!!")
                     }
             }
     }
 
     @ResumedToPause
-    fun observeViewSize(rxViewInteractionStream: ViewInteractionStream): Observable<OnSizeChangeEvent.ViewSize> {
-        return rxViewInteractionStream.asObservable()
-            .switchMap { view ->
-                view.find(R.id.button1).onSizeChangeAsObservable()
+    fun observeViewSize(rxViewInteractionStream: ViewInteractionStream): Flow<OnSizeChangeEvent.ViewSize> {
+        return rxViewInteractionStream.asFlow()
+            .flatMapLatest { view ->
+                view.find(R.id.button1).onSizeChangeAsFlow()
             }
-            .doOnNext {
+            .onEach {
                 Log.i(TAG, "$it")
             }
     }

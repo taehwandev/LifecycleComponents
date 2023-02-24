@@ -7,9 +7,9 @@ javaX = "1"
 # https://github.com/square/kotlinpoet
 kotlinPoet = "1.12.0"
 # https://github.com/google/ksp
-ksp = "1.7.20-1.0.8"
+ksp = "1.8.0-1.0.8"
 # https://github.com/JetBrains/kotlin
-kotlin = "1.7.20"
+kotlin = "1.8.0"
 agp = "7.4.1"
 # https://github.com/mannodermaus/android-junit5
 junit5 = "5.8.2"
@@ -18,19 +18,15 @@ detekt = "1.22.0"
 kotlinDsl = "2.2.0"
 # https://docs.gradle.org/current/userguide/jacoco_plugin.html
 jacoco = "0.8.8"
-jsonParser = "0.1.2"
+jsonParser = "0.1.3"
 androidBuildTool = "33.0.1"
 androidCompile = "33"
 targetSdk = "33"
 minSdk = "21"
-# https://github.com/ReactiveX/RxJava
-rxjava = "3.1.6"
-# https://github.com/ReactiveX/RxAndroid
-rxjavaAndroid = "3.0.2"
 # https://github.com/Kotlin/kotlinx.coroutines
 coroutine = "1.6.4"
 # https://github.com/cashapp/turbine
-turbine = "0.8.0"
+turbine = "0.12.1"
 # https://developer.android.com/jetpack/androidx/releases/test
 androidxTest-junit = "1.1.5"
 androidxTest-core = "1.5.0"
@@ -56,16 +52,15 @@ androidx-collection = "1.2.0"
 compose-runtime = "1.3.3"
 compose-material = "1.3.1"
 # https://developer.android.com/jetpack/androidx/releases/compose-kotlin
-compose-compiler = "1.3.2"
-alatan-bundledata = "0.1.1"
-alatan-coroutine = "0.1.1"
-alatan-resourceprovider = "0.1.1"
-alatan-alerts = "0.1.2"
-alatan-rxjava = "0.1.1"
+compose-compiler = "1.4.1"
+alatan-bundledata = "0.1.2"
+alatan-coroutine = "0.1.2"
+alatan-resourceprovider = "0.1.2"
+alatan-alerts = "0.1.3"
 alatan-databinding = "0.1.1"
-alatan-preferences = "0.1.4"
+alatan-preferences = "0.1.5"
 # https://github.com/google/dagger
-dagger = "2.44.2"
+dagger = "2.45"
 
 
 # test
@@ -85,8 +80,6 @@ common-moshiCompiler = { module = "com.squareup.moshi:moshi-kotlin-codegen", ver
 common-javaX = { module = "javax.inject:javax.inject", version.ref = "javaX" }
 common-kotlinPoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinPoet" }
 common-kspProcessingApi = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
-common-rxjava = { module = "io.reactivex.rxjava3:rxjava", version.ref = "rxjava" }
-common-rxjavaAndroid = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxjavaAndroid" }
 common-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutine" }
 common-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "androidx.recyclerview" }
 
@@ -126,7 +119,6 @@ dagger-androidCompiler = { module = "com.google.dagger:dagger-android-processor"
 
 alatan-preferences-builder = { module = "com.github.android-alatan.preferences:preferences-builder", version.ref = "alatan.preferences" }
 alatan-preferences-flow = { module = "com.github.android-alatan.preferences:preferences-adapter-flow", version.ref = "alatan.preferences" }
-alatan-preferences-rx = { module = "com.github.android-alatan.preferences:preferences-adapter-rx", version.ref = "alatan.preferences" }
 alatan-preferences-annotation = { module = "com.github.android-alatan.preferences:preferences-annotation", version.ref = "alatan.preferences" }
 alatan-preferences-api = { module = "com.github.android-alatan.preferences:preferences-adapter-api", version.ref = "alatan.preferences" }
 
@@ -139,9 +131,6 @@ alatan-bundledata-impl = { module = "com.github.android-alatan.BundleData:bundle
 alatan-bundledata-api = { module = "com.github.android-alatan.BundleData:bundle-data-api", version.ref = "alatan.bundledata" }
 alatan-bundledata-assertion = { module = "com.github.android-alatan.BundleData:bundle-data-assertion", version.ref = "alatan.bundledata" }
 
-alatan-rxjava-scheduler-api = { module = "com.github.android-alatan.RxJava-Alatan:rx-scheduler-api", version.ref = "alatan-rxjava" }
-alatan-rxjava-scheduler-assertion = { module = "com.github.android-alatan.RxJava-Alatan:rx-scheduler-assertion", version.ref = "alatan-rxjava" }
-alatan-rxjava-recyclerviewadapter = { module = "com.github.android-alatan.RxJava-Alatan:rx-recyclerview-adapter", version.ref = "alatan-rxjava" }
 
 alatan-coroutine-dispatcher-api = { module = "com.github.android-alatan.Coroutine-Alatan:coroutine-dispatcher-api", version.ref = "alatan.coroutine" }
 alatan-coroutine-dispatcher-assertion = { module = "com.github.android-alatan.Coroutine-Alatan:coroutine-dispatcher-assertion", version.ref = "alatan.coroutine" }

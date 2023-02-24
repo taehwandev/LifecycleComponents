@@ -11,14 +11,6 @@ object TestUtils {
         """
     }
 
-    fun rxJavaInterface(): String {
-        return """
-           package io.reactivex.rxjava3.core
-             
-           interface Observable<T>
-        """
-    }
-
     fun coroutineInterface(): String {
         return """
            package kotlinx.coroutines.flow

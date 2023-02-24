@@ -1,13 +1,13 @@
 package io.androidalatan.router.journey
 
 import android.content.Intent
-import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import io.androidalatan.router.api.Visitor
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 
 class JourneyGroupTest {
 

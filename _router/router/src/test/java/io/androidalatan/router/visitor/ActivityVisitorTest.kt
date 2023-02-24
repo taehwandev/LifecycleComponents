@@ -3,13 +3,14 @@ package io.androidalatan.router.visitor
 import android.content.Intent
 import android.os.Build
 import androidx.fragment.app.FragmentActivity
-import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.verify
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
 import org.junit.runner.RunWith
 import org.mockito.Mockito
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -17,7 +18,7 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 class ActivityVisitorTest {
 
-    private val activity = Mockito.mock(FragmentActivity::class.java)
+    private val activity: FragmentActivity = mock()
     private val visitor = ActivityVisitor(activity)
 
     @Test

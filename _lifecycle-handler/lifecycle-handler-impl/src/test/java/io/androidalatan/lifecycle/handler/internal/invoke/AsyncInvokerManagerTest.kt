@@ -6,13 +6,12 @@ import io.androidalatan.lifecycle.handler.internal.ListenerAnalyzer
 import io.androidalatan.lifecycle.handler.internal.invoke.model.InvokeInfo
 import io.androidalatan.lifecycle.handler.internal.model.LifecycleStatus
 import io.androidalatan.lifecycle.handler.invokeradapter.flow.FlowInvokeAdapter
-import io.androidalatan.lifecycle.handler.invokeradapter.rxjava.RxInvokeAdapter
 import io.androidalatan.view.event.api.ViewInteractionStream
 import io.androidalatan.view.event.impl.ViewInteractionStreamImpl
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
@@ -24,13 +23,13 @@ internal class AsyncInvokerManagerTest {
     private val manager =
         AsyncInvokerManager(
             mapOf(ViewInteractionStream::class.java to ViewInteractionStreamImpl()),
-            listOf(RxInvokeAdapter(Schedulers.trampoline()) {}, FlowInvokeAdapter(TestCoroutineScope()) {})
+            listOf(FlowInvokeAdapter(TestScope()) {})
         )
     private val analyzer = ListenerAnalyzer()
 
     @Test
     fun addMethods() {
-        val lifecycleListener = MockRxLifecycleListener()
+        val lifecycleListener = MockFlowLifecycleListener()
         val methods = analyzer.analyze(lifecycleListener)
 
         manager.addMethods(lifecycleListener, methods.toList())
@@ -47,7 +46,7 @@ internal class AsyncInvokerManagerTest {
 
     @Test
     fun removeMethodsOf() {
-        val lifecycleListener = MockRxLifecycleListener()
+        val lifecycleListener = MockFlowLifecycleListener()
         val methods = analyzer.analyze(lifecycleListener)
         manager.addMethods(lifecycleListener, methods.toList())
         val invokers = manager.invokers
@@ -70,10 +69,10 @@ internal class AsyncInvokerManagerTest {
     }
 
     @Test
-    fun execute() {
-        val lifecycleListener = MockRxLifecycleListener()
+    fun execute() = runTest {
+        val lifecycleListener = MockFlowLifecycleListener()
         Assertions.assertEquals(0, lifecycleListener.executedUnitCount)
-        Assertions.assertEquals(0, lifecycleListener.executedRxCount)
+        Assertions.assertEquals(0, lifecycleListener.executedFlowCount)
         val methods = analyzer.analyze(lifecycleListener)
         manager.addMethods(lifecycleListener, methods.toList())
 
@@ -83,10 +82,10 @@ internal class AsyncInvokerManagerTest {
         Assertions.assertEquals(1, manager.invokedMap[lifecycleListener]!![CreatedToDestroy::class]!!.size)
         Assertions.assertEquals(1, manager.invokedMap[lifecycleListener]!![ResumedToPause::class]!!.size)
         Assertions.assertFalse(Unit in manager.invokedMap[lifecycleListener]!![CreatedToDestroy::class]!!)
-        Assertions.assertTrue(manager.invokedMap[lifecycleListener]!![CreatedToDestroy::class]!!.first() is Disposable)
+        Assertions.assertTrue(manager.invokedMap[lifecycleListener]!![CreatedToDestroy::class]!!.first() is Job)
 
         Assertions.assertEquals(0, lifecycleListener.executedUnitCount)
-        Assertions.assertEquals(2, lifecycleListener.executedRxCount)
+        Assertions.assertEquals(2, lifecycleListener.executedFlowCount)
 
         manager.execute(LifecycleStatus.ON_PAUSE)
         Assertions.assertEquals(0, manager.invokedMap[lifecycleListener]!![ResumedToPause::class]!!.size)
@@ -98,9 +97,9 @@ internal class AsyncInvokerManagerTest {
 
     @Test
     fun executeMissingEvent() {
-        val lifecycleListener = MockRxLifecycleListener()
+        val lifecycleListener = MockFlowLifecycleListener()
         Assertions.assertEquals(0, lifecycleListener.executedUnitCount)
-        Assertions.assertEquals(0, lifecycleListener.executedRxCount)
+        Assertions.assertEquals(0, lifecycleListener.executedFlowCount)
         val methods = analyzer.analyze(lifecycleListener)
         manager.addMethods(lifecycleListener, methods.toList())
 

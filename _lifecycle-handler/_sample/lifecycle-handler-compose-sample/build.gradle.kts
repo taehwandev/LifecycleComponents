@@ -60,8 +60,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodelKtx)
     implementation(libs.androidx.lifecycle.livedataKtx)
 
-    implementation(libs.common.rxjava)
-    implementation(libs.common.rxjavaAndroid)
     implementation(libs.google.material)
 
     implementation(libs.compose.ui)
@@ -69,15 +67,12 @@ dependencies {
     implementation(libs.compose.runtimeLiveData)
     implementation(libs.compose.material)
 
-    implementation(libs.alatan.rxjava.scheduler.api)
     implementation(libs.alatan.bundledata.impl)
 
     implementation(projects.lifecycleHandlerComposeActivity)
     implementation(projects.viewEventAdapterFlow)
-    implementation(projects.viewEventAdapterRx)
     implementation(projects.lifecycleHandlerInvokeadapterApi)
     implementation(projects.lifecycleHandlerInvokeadapterFlow)
-    implementation(projects.lifecycleHandlerInvokeadapterRx)
 
     implementation(projects.providedComposeLocalApi)
     ksp(projects.providedComposeLocalKsp)

@@ -3,8 +3,10 @@ package io.androidalatan.lifecycle.handler.sample.bottomsheet
 import io.androidalatan.lifecycle.handler.annotations.async.CreatedToDestroy
 import io.androidalatan.lifecycle.handler.api.LifecycleListener
 import io.androidalatan.lifecycle.handler.api.LifecycleSource
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onEach
 
 class SampleBottomSheetViewModel(
     lifecycleSource: LifecycleSource,
@@ -12,9 +14,19 @@ class SampleBottomSheetViewModel(
 ) : LifecycleListener(lifecycleSource) {
 
     @CreatedToDestroy
-    fun setAdapterValue(): Single<List<String>> {
-        return Observable.just("Share", "Save", "Cancel")
-            .toList()
-            .compose(adapter.asRxTransformer())
+    fun setAdapterValue(): Flow<List<String>> {
+        return flowOf("Share", "Save", "Cancel")
+            .let { titleFlow ->
+                val list = mutableListOf<String>()
+                flow<List<String>> {
+                    titleFlow.collect { title ->
+                        list.add(title)
+                    }
+                    emit(list)
+                }
+            }
+            .onEach {
+                adapter.setData(it)
+            }
     }
 }

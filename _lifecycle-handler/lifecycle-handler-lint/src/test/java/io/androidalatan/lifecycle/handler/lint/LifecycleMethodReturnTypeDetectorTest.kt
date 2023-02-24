@@ -9,31 +9,6 @@ import org.junit.jupiter.api.Test
 class LifecycleMethodReturnTypeDetectorTest {
 
     @Test
-    fun `rxjava method`() {
-        TestLintTask.lint()
-            .files(
-                LintDetectorTest.kotlin(TestUtils.rxJavaInterface()),
-                LintDetectorTest.kotlin(TestUtils.annotationClass()),
-                LintDetectorTest.kotlin(
-                    """
-                        package other
-
-                        class TestClass {
-                        
-                            @io.androidalatan.lifecycle.handler.annotations.async.StartedToStop
-                            fun helloWorld(): io.reactivex.rxjava3.core.Observable<Boolean> { }
-                        }
-            """
-                )
-            )
-            .issues(LifecycleLintIssueRegistry.ISSUE_RETURN_TYPE)
-            .allowCompilationErrors()
-            .allowMissingSdk(true)
-            .run()
-            .expectClean()
-    }
-
-    @Test
     fun `flow method`() {
         TestLintTask.lint()
             .files(

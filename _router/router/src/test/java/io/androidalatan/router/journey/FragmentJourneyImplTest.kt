@@ -2,13 +2,12 @@ package io.androidalatan.router.journey
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import io.androidalatan.router.api.Visitor
+import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import io.androidalatan.router.api.Visitor
-
-import org.junit.jupiter.api.Test
 
 class FragmentJourneyImplTest {
 
