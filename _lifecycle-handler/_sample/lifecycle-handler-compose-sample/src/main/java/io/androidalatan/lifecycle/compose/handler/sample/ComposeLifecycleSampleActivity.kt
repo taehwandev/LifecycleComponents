@@ -17,25 +17,24 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import io.androidalatan.component.view.compose.api.toolbar.onToolbarMenuItemClick
 import io.androidalatan.component.view.compose.api.view.onClick
 import io.androidalatan.component.view.compose.api.view.viewSizeEvent
-import io.androidalatan.compose.local.ksp.api.ProvidedComposeLocal
 import io.androidalatan.lifecycle.handler.compose.activity.ComposeLifecycleActivity
 import io.androidalatan.lifecycle.handler.compose.activity.localowners.LocalComposeEventTriggerOwner
+import io.androidalatan.lifecycle.handler.compose.util.activate
+import io.androidalatan.lifecycle.handler.compose.util.lifecycleViewModel
 
 class ComposeLifecycleSampleActivity : ComposeLifecycleActivity() {
 
-    @ProvidedComposeLocal
-    val viewModel = ComposeSampleViewModel(this)
+    private val viewModel = ComposeSampleViewModel(this)
 
     override val activateAllListenersWhenInit: Boolean = true
 
     @SuppressLint("ComposableNaming")
     @Composable
     override fun contentView() {
-        ComposeLocalProvider {
-            Column {
-                TopLayout()
-                HelloWorld1(viewModel())
-            }
+        viewModel.activate()
+        Column {
+            TopLayout()
+            HelloWorld1()
         }
     }
 
@@ -59,7 +58,7 @@ fun TopLayout() {
 }
 
 @Composable
-fun HelloWorld1(composeSampleViewModel: ComposeSampleViewModel = viewModel()) {
+fun HelloWorld1(composeSampleViewModel: ComposeSampleViewModel = lifecycleViewModel()) {
     val composeViewInteractionTrigger = LocalComposeEventTriggerOwner.current
     Text("Hello World1~!")
     Button(onClick = composeViewInteractionTrigger.onClick(R.id.button1),

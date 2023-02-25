@@ -13,9 +13,9 @@ import androidx.fragment.app.FragmentActivity
 import io.androidalatan.backkey.handler.ActivityBackKeyObserver
 import io.androidalatan.backkey.handler.BackKeyHandlerStreamImpl
 import io.androidalatan.backkey.handler.api.BackKeyHandlerStream
-import io.androidalatan.bundle.collector.BundleCollectorStreamImpl
 import io.androidalatan.bundle.BundleDataImpl
 import io.androidalatan.bundle.IntentDataImpl
+import io.androidalatan.bundle.collector.BundleCollectorStreamImpl
 import io.androidalatan.bundle.collector.api.BundleCollectorStream
 import io.androidalatan.component.view.compose.ComposeKeyboardControllerImpl
 import io.androidalatan.component.view.compose.ComposeViewInteractionTriggerImpl
@@ -28,14 +28,17 @@ import io.androidalatan.lifecycle.handler.activity.LifecycleNotifierImpl
 import io.androidalatan.lifecycle.handler.api.LifecycleListener
 import io.androidalatan.lifecycle.handler.api.LifecycleNotifier
 import io.androidalatan.lifecycle.handler.api.LifecycleSource
+import io.androidalatan.lifecycle.handler.api.LifecycleViewModelStoreOwner
 import io.androidalatan.lifecycle.handler.compose.activity.localowners.LocalComposeEventTriggerOwner
 import io.androidalatan.lifecycle.handler.compose.activity.localowners.LocalComposeKeyboardControllerOwner
+import io.androidalatan.lifecycle.handler.compose.activity.localowners.LocalLifecycleViewModelStoreOwner
 import io.androidalatan.lifecycle.handler.compose.util.LocalLifecycleNotifierOwner
 import io.androidalatan.lifecycle.handler.internal.invoke.AsyncInvokerManager
 import io.androidalatan.lifecycle.handler.internal.invoke.InvokerManagerImpl
 import io.androidalatan.lifecycle.handler.internal.invoke.SyncInvokerManager
 import io.androidalatan.lifecycle.handler.internal.invoke.coroutine.CoroutineInvokerManagerImpl
 import io.androidalatan.lifecycle.handler.invokeradapter.api.InvokeAdapterInitializer
+import io.androidalatan.lifecycle.handler.store.LifecycleViewModelStoreOwnerImpl
 import io.androidalatan.lifecycle.lazyprovider.LazyProvider
 import io.androidalatan.request.permission.PermissionExplanationBuilderFactoryImpl
 import io.androidalatan.request.permission.PermissionInvokerImpl
@@ -109,6 +112,8 @@ abstract class ComposeLifecycleActivity private constructor(
 
     private val lifecycleActivator = LifecycleActivator()
 
+    private val viewModelStoreOwner: LifecycleViewModelStoreOwner = LifecycleViewModelStoreOwnerImpl()
+
     @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         lazyProvider.set(this)
@@ -131,7 +136,8 @@ abstract class ComposeLifecycleActivity private constructor(
             CompositionLocalProvider(
                 LocalComposeEventTriggerOwner provides composeViewInteractionTrigger,
                 LocalLifecycleNotifierOwner provides lifecycleNotifier,
-                LocalComposeKeyboardControllerOwner provides composeKeyboardController
+                LocalComposeKeyboardControllerOwner provides composeKeyboardController,
+                LocalLifecycleViewModelStoreOwner provides viewModelStoreOwner,
             ) {
                 LifecycleHandle {
                     (composeAlertDialogBuilderFactory as ComposeAlertDialogBuilderFactoryImpl).activate()

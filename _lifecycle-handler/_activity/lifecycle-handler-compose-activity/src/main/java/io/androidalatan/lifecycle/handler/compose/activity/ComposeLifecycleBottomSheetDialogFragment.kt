@@ -26,13 +26,16 @@ import io.androidalatan.lifecycle.handler.activity.LifecycleNotifierImpl
 import io.androidalatan.lifecycle.handler.api.ChildLifecycleSource
 import io.androidalatan.lifecycle.handler.api.LifecycleListener
 import io.androidalatan.lifecycle.handler.api.LifecycleNotifier
+import io.androidalatan.lifecycle.handler.api.LifecycleViewModelStoreOwner
 import io.androidalatan.lifecycle.handler.compose.activity.localowners.LocalComposeEventTriggerOwner
+import io.androidalatan.lifecycle.handler.compose.activity.localowners.LocalLifecycleViewModelStoreOwner
 import io.androidalatan.lifecycle.handler.compose.util.LocalLifecycleNotifierOwner
 import io.androidalatan.lifecycle.handler.internal.invoke.AsyncInvokerManager
 import io.androidalatan.lifecycle.handler.internal.invoke.InvokerManagerImpl
 import io.androidalatan.lifecycle.handler.internal.invoke.SyncInvokerManager
 import io.androidalatan.lifecycle.handler.internal.invoke.coroutine.CoroutineInvokerManagerImpl
 import io.androidalatan.lifecycle.handler.invokeradapter.api.InvokeAdapterInitializer
+import io.androidalatan.lifecycle.handler.store.LifecycleViewModelStoreOwnerImpl
 import io.androidalatan.lifecycle.lazyprovider.LazyProvider
 import io.androidalatan.request.permission.PermissionExplanationBuilderFactoryImpl
 import io.androidalatan.request.permission.PermissionInvokerImpl
@@ -95,13 +98,16 @@ abstract class ComposeLifecycleBottomSheetDialogFragment(
 
     private val composeViewInteractionTrigger = ComposeViewInteractionTriggerImpl()
 
+    private val viewModelStoreOwner: LifecycleViewModelStoreOwner = LifecycleViewModelStoreOwnerImpl()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val composeView = ComposeView(requireContext())
         composeView.setContent {
             CompositionLocalProvider(
                 LocalComposeEventTriggerOwner provides composeViewInteractionTrigger,
-                LocalLifecycleNotifierOwner provides lifecycleNotifier
+                LocalLifecycleNotifierOwner provides lifecycleNotifier,
+                LocalLifecycleViewModelStoreOwner provides viewModelStoreOwner,
             ) {
                 LifecycleHandle {
                     contentView()
