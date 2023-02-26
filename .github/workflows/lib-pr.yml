@@ -35,7 +35,7 @@ jobs :
         run : chmod +x gradlew
 
       - name : Build app package
-        run : ./gradlew assemble
+        run : ./gradlew assembleDebug
 
       - name : Cleanup Gradle Cache
         # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
@@ -73,7 +73,7 @@ jobs :
         run : chmod +x gradlew
 
       - name : Test Debug build
-        run : ./gradlew test
+        run : ./gradlew testDebug
 
       - name : Extract JacocoReport
         run : ./gradlew jacocoReport

@@ -38,7 +38,7 @@ jobs :
         run : chmod +x gradlew
 
       - name : Build app package
-        run : ./gradlew assemble --stacktrace
+        run : ./gradlew assembleRelease --stacktrace
 
       - name : Cleanup Gradle Cache
         # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
@@ -81,7 +81,7 @@ jobs :
         run : chmod +x gradlew
 
       - name : Test Debug build
-        run : ./gradlew test
+        run : ./gradlew testRelease
 
       - name : Cleanup Gradle Cache
         # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
