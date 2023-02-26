@@ -74,7 +74,4 @@ dependencies {
     implementation(projects.lifecycleHandlerInvokeadapterApi)
     implementation(projects.lifecycleHandlerInvokeadapterFlow)
 
-    implementation(projects.providedComposeLocalApi)
-    ksp(projects.providedComposeLocalKsp)
-
 }

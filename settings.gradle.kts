@@ -83,8 +83,6 @@ include(
     ":lifecycle-handler-compose-util",
     ":composable-holder",
     ":composable-lifecycle-listener-activator",
-    ":provided-compose-local-api",
-    ":provided-compose-local-ksp",
 
     ":lifecycle-handler-activity",
     ":lifecycle-handler-compose-activity",
