@@ -108,7 +108,7 @@ abstract class ComposeLifecycleActivity private constructor(
     /**
      * If your activity needs to register listener dynamically, e.g) Tab, you should not override this or keep this false
      */
-    protected open val activateAllListenersWhenInit: Boolean = false
+    protected open val activateAllListenersWhenInit: Boolean = true
 
     private val lifecycleActivator = LifecycleActivator()
 
