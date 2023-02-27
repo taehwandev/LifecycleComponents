@@ -2,6 +2,11 @@ package io.androidalatan.compose.holder
 
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import io.androidalatan.compose.holder.di.ComposableHolderComponent
 import io.androidalatan.compose.holder.lifecycle.activator.LifecycleActivator
 import io.androidalatan.lifecycle.handler.api.ChildLifecycleSource
@@ -13,10 +18,10 @@ abstract class ComposableHolder(private val componentBuilder: ComposableHolderCo
 
     private val lifecycleActivator = LifecycleActivator()
 
-    protected open val activateAllListeners: Boolean = false
+    protected open val activateAllListeners: Boolean = true
 
     // inspired by dagger.internal.DoubleCheck
-    fun injectIfNeeded() {
+    private fun injectIfNeeded() {
         var result = lock
         if (result == UNINITIALIZED) {
             synchronized(this) {
@@ -34,8 +39,18 @@ abstract class ComposableHolder(private val componentBuilder: ComposableHolderCo
     @SuppressLint("ComposableNaming")
     @Composable
     fun showContent() {
-        lifecycleActivator.activateAllIfNeeded(activateWhenInit = activateAllListeners)
-        render()
+
+        var initialized by remember { mutableStateOf(lock) }
+
+        if (initialized == UNINITIALIZED) {
+            LaunchedEffect(key1 = initialized) {
+                injectIfNeeded()
+                initialized = lock
+            }
+        } else {
+            lifecycleActivator.activateAllIfNeeded(activateWhenInit = activateAllListeners)
+            render()
+        }
     }
 
     @SuppressLint("ComposableNaming")
