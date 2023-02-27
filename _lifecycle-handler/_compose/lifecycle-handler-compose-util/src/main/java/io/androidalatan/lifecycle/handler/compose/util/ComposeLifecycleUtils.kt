@@ -12,9 +12,9 @@ fun <T : LifecycleListener> T.activate(): T {
     val lifecycleViewModelStoreOwner = LocalLifecycleViewModelStoreOwner.current
 
     val lifecycleListener = remember { this }
+    lifecycleViewModelStoreOwner.cached(lifecycleListener)
 
     DisposableEffect(lifecycleListener) {
-        lifecycleViewModelStoreOwner.cached(lifecycleListener)
         lifecycleNotifier.add(lifecycleListener)
 
         onDispose {
