@@ -5,8 +5,12 @@ plugins {
 }
 
 dependencies {
+    api(projects.lifecycleHandlerComposeUtil)
+
     implementation(libs.compose.runtime)
+    implementation(libs.compose.ui)
     implementation(libs.dagger.base)
+    implementation(libs.androidx.lifecycle.common)
     implementation(projects.composableLifecycleListenerActivator)
     implementation(projects.lifecycleHandlerApi)
 }

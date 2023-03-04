@@ -10,6 +10,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import io.androidalatan.backkey.handler.ActivityBackKeyObserver
 import io.androidalatan.backkey.handler.BackKeyHandlerStreamImpl
 import io.androidalatan.backkey.handler.api.BackKeyHandlerStream
@@ -28,17 +31,17 @@ import io.androidalatan.lifecycle.handler.activity.LifecycleNotifierImpl
 import io.androidalatan.lifecycle.handler.api.LifecycleListener
 import io.androidalatan.lifecycle.handler.api.LifecycleNotifier
 import io.androidalatan.lifecycle.handler.api.LifecycleSource
-import io.androidalatan.lifecycle.handler.api.LifecycleViewModelStoreOwner
 import io.androidalatan.lifecycle.handler.compose.activity.localowners.LocalComposeEventTriggerOwner
 import io.androidalatan.lifecycle.handler.compose.activity.localowners.LocalComposeKeyboardControllerOwner
-import io.androidalatan.lifecycle.handler.compose.activity.localowners.LocalLifecycleViewModelStoreOwner
+import io.androidalatan.lifecycle.handler.compose.cache.ComposeCacheProvider
+import io.androidalatan.lifecycle.handler.compose.cache.LocalComposeComposeCacheOwner
+import io.androidalatan.lifecycle.handler.compose.cache.composeCacheProvider
 import io.androidalatan.lifecycle.handler.compose.util.LocalLifecycleNotifierOwner
 import io.androidalatan.lifecycle.handler.internal.invoke.AsyncInvokerManager
 import io.androidalatan.lifecycle.handler.internal.invoke.InvokerManagerImpl
 import io.androidalatan.lifecycle.handler.internal.invoke.SyncInvokerManager
 import io.androidalatan.lifecycle.handler.internal.invoke.coroutine.CoroutineInvokerManagerImpl
 import io.androidalatan.lifecycle.handler.invokeradapter.api.InvokeAdapterInitializer
-import io.androidalatan.lifecycle.handler.store.LifecycleViewModelStoreOwnerImpl
 import io.androidalatan.lifecycle.lazyprovider.LazyProvider
 import io.androidalatan.request.permission.PermissionExplanationBuilderFactoryImpl
 import io.androidalatan.request.permission.PermissionInvokerImpl
@@ -70,7 +73,8 @@ abstract class ComposeLifecycleActivity private constructor(
     Router by activityRouter,
     PermissionStream by permissionStream,
     BackKeyHandlerStream by backKeyHandlerStreamImpl,
-    ViewInteractionStream by viewInteractionStream {
+    ViewInteractionStream by viewInteractionStream,
+    ComposeCacheProvider by composeCacheProvider() {
 
     constructor() : this(LazyProvider<FragmentActivity>())
 
@@ -112,8 +116,6 @@ abstract class ComposeLifecycleActivity private constructor(
 
     private val lifecycleActivator = LifecycleActivator()
 
-    private val viewModelStoreOwner: LifecycleViewModelStoreOwner = LifecycleViewModelStoreOwnerImpl()
-
     @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         lazyProvider.set(this)
@@ -128,6 +130,8 @@ abstract class ComposeLifecycleActivity private constructor(
         savedInstanceState?.let { bundle.putAll(it) } // let savedInstance override bundle
         bundleCollectorStream.updateIntent(IntentDataImpl(activityIntent, BundleDataImpl(bundle)))
 
+        val composeCache = composeCache()
+
         setContent {
             LocalSoftwareKeyboardController.current?.let {
                 composeKeyboardController.setKeyboardController(it)
@@ -137,7 +141,7 @@ abstract class ComposeLifecycleActivity private constructor(
                 LocalComposeEventTriggerOwner provides composeViewInteractionTrigger,
                 LocalLifecycleNotifierOwner provides lifecycleNotifier,
                 LocalComposeKeyboardControllerOwner provides composeKeyboardController,
-                LocalLifecycleViewModelStoreOwner provides viewModelStoreOwner,
+                LocalComposeComposeCacheOwner provides composeCache,
             ) {
                 LifecycleHandle {
                     (composeAlertDialogBuilderFactory as ComposeAlertDialogBuilderFactoryImpl).activate()
@@ -147,6 +151,13 @@ abstract class ComposeLifecycleActivity private constructor(
             }
         }
 
+        lifecycle.addObserver(object : LifecycleEventObserver {
+            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                if (event == Lifecycle.Event.ON_DESTROY) {
+                    composeCache.clear()
+                }
+            }
+        })
     }
 
     @SuppressLint("ComposableNaming")

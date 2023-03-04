@@ -19,12 +19,12 @@ import io.androidalatan.component.view.compose.api.view.onClick
 import io.androidalatan.component.view.compose.api.view.viewSizeEvent
 import io.androidalatan.lifecycle.handler.compose.activity.ComposeLifecycleActivity
 import io.androidalatan.lifecycle.handler.compose.activity.localowners.LocalComposeEventTriggerOwner
-import io.androidalatan.lifecycle.handler.compose.util.activate
-import io.androidalatan.lifecycle.handler.compose.util.lifecycleViewModel
+import io.androidalatan.lifecycle.handler.compose.cache.cached
+import io.androidalatan.lifecycle.handler.compose.cache.composeCached
 
 class ComposeLifecycleSampleActivity : ComposeLifecycleActivity() {
 
-    private val viewModel = ComposeSampleViewModel(this)
+    private val viewModel by composeCached { ComposeSampleViewModel(this) }
 
     override val activateAllListenersWhenInit: Boolean = true
 
@@ -57,7 +57,7 @@ fun TopLayout() {
 }
 
 @Composable
-fun HelloWorld1(composeSampleViewModel: ComposeSampleViewModel = lifecycleViewModel()) {
+fun HelloWorld1(composeSampleViewModel: ComposeSampleViewModel = cached()) {
     val composeViewInteractionTrigger = LocalComposeEventTriggerOwner.current
     Text("Hello World1~!")
     Button(onClick = composeViewInteractionTrigger.onClick(R.id.button1),

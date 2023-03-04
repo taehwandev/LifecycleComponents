@@ -26,16 +26,16 @@ import io.androidalatan.lifecycle.handler.activity.LifecycleNotifierImpl
 import io.androidalatan.lifecycle.handler.api.ChildLifecycleSource
 import io.androidalatan.lifecycle.handler.api.LifecycleListener
 import io.androidalatan.lifecycle.handler.api.LifecycleNotifier
-import io.androidalatan.lifecycle.handler.api.LifecycleViewModelStoreOwner
 import io.androidalatan.lifecycle.handler.compose.activity.localowners.LocalComposeEventTriggerOwner
-import io.androidalatan.lifecycle.handler.compose.activity.localowners.LocalLifecycleViewModelStoreOwner
+import io.androidalatan.lifecycle.handler.compose.cache.ComposeCacheProvider
+import io.androidalatan.lifecycle.handler.compose.cache.LocalComposeComposeCacheOwner
+import io.androidalatan.lifecycle.handler.compose.cache.composeCacheProvider
 import io.androidalatan.lifecycle.handler.compose.util.LocalLifecycleNotifierOwner
 import io.androidalatan.lifecycle.handler.internal.invoke.AsyncInvokerManager
 import io.androidalatan.lifecycle.handler.internal.invoke.InvokerManagerImpl
 import io.androidalatan.lifecycle.handler.internal.invoke.SyncInvokerManager
 import io.androidalatan.lifecycle.handler.internal.invoke.coroutine.CoroutineInvokerManagerImpl
 import io.androidalatan.lifecycle.handler.invokeradapter.api.InvokeAdapterInitializer
-import io.androidalatan.lifecycle.handler.store.LifecycleViewModelStoreOwnerImpl
 import io.androidalatan.lifecycle.lazyprovider.LazyProvider
 import io.androidalatan.request.permission.PermissionExplanationBuilderFactoryImpl
 import io.androidalatan.request.permission.PermissionInvokerImpl
@@ -67,7 +67,8 @@ abstract class ComposeLifecycleBottomSheetDialogFragment(
     Router by fragmentRouter,
     PermissionStream by permissionStream,
     BackKeyHandlerStream by backKeyHandlerStreamImpl,
-    ViewInteractionStream by viewInteractionStream {
+    ViewInteractionStream by viewInteractionStream,
+    ComposeCacheProvider by composeCacheProvider() {
 
     constructor() : this(LazyProvider<Fragment>(), LazyProvider<FragmentActivity>())
 
@@ -98,16 +99,15 @@ abstract class ComposeLifecycleBottomSheetDialogFragment(
 
     private val composeViewInteractionTrigger = ComposeViewInteractionTriggerImpl()
 
-    private val viewModelStoreOwner: LifecycleViewModelStoreOwner = LifecycleViewModelStoreOwnerImpl()
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val composeView = ComposeView(requireContext())
+        val composeCache = composeCache()
         composeView.setContent {
             CompositionLocalProvider(
                 LocalComposeEventTriggerOwner provides composeViewInteractionTrigger,
                 LocalLifecycleNotifierOwner provides lifecycleNotifier,
-                LocalLifecycleViewModelStoreOwner provides viewModelStoreOwner,
+                LocalComposeComposeCacheOwner provides composeCache,
             ) {
                 LifecycleHandle {
                     contentView()
