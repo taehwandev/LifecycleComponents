@@ -35,7 +35,7 @@ interface ComposeCache {
 
 }
 
-private class ComposeCacheImpl : ComposeCache {
+internal class ComposeCacheImpl : ComposeCache {
     val cached = mutableMapOf<String, Any>()
 
     @Suppress("UNCHECKED_CAST")
