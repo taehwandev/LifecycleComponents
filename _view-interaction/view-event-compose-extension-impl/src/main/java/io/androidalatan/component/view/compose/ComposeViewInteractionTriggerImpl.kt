@@ -66,7 +66,7 @@ class ComposeViewInteractionTriggerImpl : ComposeViewInteractionTrigger, Compose
 
     override fun <T : ViewEvent> unregisterCallback(id: Int, event: Class<T>) {
         synchronized(this) {
-            callbacks.filter { it.id == id && it.event.javaClass == event }
+            callbacks.filter { it.id == id && it.event == event }
                 .forEach {
                     callbacks.remove(it)
                 }
