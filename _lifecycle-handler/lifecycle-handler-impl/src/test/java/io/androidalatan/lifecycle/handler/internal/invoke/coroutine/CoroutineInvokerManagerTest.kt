@@ -20,13 +20,14 @@ class CoroutineInvokerManagerTest {
     private val dispatcherProvider = MockDispatcherProvider()
     private val coroutineInvokerManager = CoroutineInvokerManagerImpl(dispatcherProvider)
     private val manager = SyncInvokerManager(coroutineInvokerManager)
+    private val caller = Any()
 
     @Test
     fun invokerListTest() {
         val lifecycleListener = MockCoroutineLifecycleListener()
 
         val methodInfo = MethodInfo(OnCreated::class, lifecycleListener::class.java.declaredMethods.first { it.name == "execute" })
-        manager.addMethods(lifecycleListener, listOf(methodInfo))
+        manager.addMethods(caller, lifecycleListener, listOf(methodInfo))
 
         Assertions.assertEquals(
             mapOf(methodInfo.annotationKClass to listOf(SyncInvokerInfo(methodInfo.method, true, false))),
@@ -40,14 +41,14 @@ class CoroutineInvokerManagerTest {
         val lifecycleListener = MockCoroutineLifecycleListener()
 
         val methodInfo = MethodInfo(OnCreated::class, lifecycleListener::class.java.declaredMethods.first { it.name == methodName })
-        manager.addMethods(lifecycleListener, listOf(methodInfo))
+        manager.addMethods(caller, lifecycleListener, listOf(methodInfo))
 
         Assertions.assertEquals(
             mapOf(methodInfo.annotationKClass to listOf(SyncInvokerInfo(methodInfo.method, true, false))),
             manager.invokers[lifecycleListener]
         )
 
-        manager.execute(LifecycleStatus.ON_CREATED)
+        manager.execute(caller, LifecycleStatus.ON_CREATED)
 
         Assertions.assertTrue(coroutineInvokerManager.coroutineScope.isActive)
         Assertions.assertEquals(1, lifecycleListener.executedCount)
@@ -59,14 +60,14 @@ class CoroutineInvokerManagerTest {
         val lifecycleListener = MockCoroutineLifecycleListener()
 
         val methodInfo = MethodInfo(OnResumed::class, lifecycleListener::class.java.declaredMethods.first { it.name == methodName })
-        manager.addMethods(lifecycleListener, listOf(methodInfo))
+        manager.addMethods(caller, lifecycleListener, listOf(methodInfo))
 
         Assertions.assertEquals(
             mapOf(methodInfo.annotationKClass to listOf(SyncInvokerInfo(methodInfo.method, true, true))),
             manager.invokers[lifecycleListener]
         )
 
-        manager.execute(LifecycleStatus.ON_RESUMED)
+        manager.execute(caller, LifecycleStatus.ON_RESUMED)
 
         Assertions.assertTrue(coroutineInvokerManager.coroutineScope.isActive)
         Assertions.assertEquals(1, lifecycleListener.executedCount)
@@ -78,14 +79,14 @@ class CoroutineInvokerManagerTest {
         val lifecycleListener = MockCoroutineLifecycleListener()
 
         val methodInfo = MethodInfo(OnPause::class, lifecycleListener::class.java.declaredMethods.first { it.name == methodName })
-        manager.addMethods(lifecycleListener, listOf(methodInfo))
+        manager.addMethods(caller, lifecycleListener, listOf(methodInfo))
 
         Assertions.assertEquals(
             mapOf(methodInfo.annotationKClass to listOf(SyncInvokerInfo(methodInfo.method, true, false))),
             manager.invokers[lifecycleListener]
         )
 
-        manager.execute(LifecycleStatus.ON_PAUSE)
+        manager.execute(caller, LifecycleStatus.ON_PAUSE)
 
         Assertions.assertTrue(coroutineInvokerManager.coroutineScope.isActive)
         Assertions.assertEquals(1, lifecycleListener.executedCount)
@@ -97,7 +98,11 @@ class CoroutineInvokerManagerTest {
 
         val methodInfoOnCreated = MethodInfo(OnCreated::class, lifecycleListener::class.java.declaredMethods.first { it.name == "execute" })
         val methodInfoOnDestroy = MethodInfo(OnDestroy::class, lifecycleListener::class.java.declaredMethods.first { it.name == "clear" })
-        manager.addMethods(lifecycleListener, listOf(methodInfoOnCreated, methodInfoOnDestroy))
+        manager.addMethods(
+            caller,
+            lifecycleListener,
+            listOf(methodInfoOnCreated, methodInfoOnDestroy)
+        )
 
         Assertions.assertEquals(
             mapOf(
@@ -107,12 +112,12 @@ class CoroutineInvokerManagerTest {
             manager.invokers[lifecycleListener]
         )
 
-        manager.execute(LifecycleStatus.ON_CREATED)
+        manager.execute(caller, LifecycleStatus.ON_CREATED)
         Assertions.assertEquals(1, lifecycleListener.executedCount)
         Assertions.assertTrue(coroutineInvokerManager.coroutineScope.isActive)
         Assertions.assertFalse(coroutineInvokerManager.coroutineScope.coroutineContext.job.isCancelled)
 
-        manager.execute(LifecycleStatus.ON_DESTROY)
+        manager.execute(caller, LifecycleStatus.ON_DESTROY)
         Assertions.assertEquals(0, lifecycleListener.executedCount)
         Assertions.assertTrue(coroutineInvokerManager.coroutineScope.isActive)
         Assertions.assertFalse(coroutineInvokerManager.coroutineScope.coroutineContext.job.isCancelled)

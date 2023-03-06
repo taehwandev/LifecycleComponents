@@ -9,7 +9,7 @@ class InvokerManagerImpl(
     private val asyncInvokerManager: InvokerManager,
     private val syncInvokerManager: InvokerManager
 ) : InvokerManager {
-    override fun addMethods(lifecycleListener: LifecycleListener, methods: List<MethodInfo>) {
+    override fun addMethods(caller: Any, lifecycleListener: LifecycleListener, methods: List<MethodInfo>) {
         methods.groupBy {
             if (it.annotationKClass in LifecycleConstant.GROUP_OF_ASYNC_ANNOTATION) {
                 KEY_ASYNC
@@ -19,26 +19,26 @@ class InvokerManagerImpl(
         }
             .forEach { methodGroup ->
                 if (methodGroup.key == KEY_ASYNC) {
-                    asyncInvokerManager.addMethods(lifecycleListener, methodGroup.value)
+                    asyncInvokerManager.addMethods(caller, lifecycleListener, methodGroup.value)
                 } else {
-                    syncInvokerManager.addMethods(lifecycleListener, methodGroup.value)
+                    syncInvokerManager.addMethods(caller, lifecycleListener, methodGroup.value)
                 }
             }
     }
 
-    override fun removeMethodsOf(lifecycleListener: LifecycleListener) {
-        asyncInvokerManager.removeMethodsOf(lifecycleListener)
-        syncInvokerManager.removeMethodsOf(lifecycleListener)
+    override fun removeMethodsOf(caller: Any, lifecycleListener: LifecycleListener) {
+        asyncInvokerManager.removeMethodsOf(caller, lifecycleListener)
+        syncInvokerManager.removeMethodsOf(caller, lifecycleListener)
     }
 
-    override fun executeMissingEvent(lifecycleListener: LifecycleListener, currentStatus: LifecycleStatus) {
-        asyncInvokerManager.executeMissingEvent(lifecycleListener, currentStatus)
-        syncInvokerManager.executeMissingEvent(lifecycleListener, currentStatus)
+    override fun executeMissingEvent(caller: Any, lifecycleListener: LifecycleListener, currentStatus: LifecycleStatus) {
+        asyncInvokerManager.executeMissingEvent(caller, lifecycleListener, currentStatus)
+        syncInvokerManager.executeMissingEvent(caller, lifecycleListener, currentStatus)
     }
 
-    override fun execute(currentStatus: LifecycleStatus) {
-        asyncInvokerManager.execute(currentStatus)
-        syncInvokerManager.execute(currentStatus)
+    override fun execute(caller: Any, currentStatus: LifecycleStatus) {
+        asyncInvokerManager.execute(caller, currentStatus)
+        syncInvokerManager.execute(caller, currentStatus)
     }
 
     companion object {

@@ -16,12 +16,13 @@ class SyncInvokerManagerTest {
     private val manager = SyncInvokerManager(
         coroutineInvokerManager = CoroutineInvokerManagerImpl(MockDispatcherProvider())
     )
+    private val caller = Any()
 
     @Test
     fun `addMethods emptyList`() {
         Assertions.assertEquals(0, manager.invokers.size)
         val lifecycleListener = MockSyncLifecycleListener()
-        manager.addMethods(lifecycleListener, emptyList())
+        manager.addMethods(caller, lifecycleListener, emptyList())
         Assertions.assertEquals(1, manager.invokers.size)
         Assertions.assertEquals(emptyMap<KClass<out Annotation>, List<Method>>(), manager.invokers[lifecycleListener])
     }
@@ -31,7 +32,7 @@ class SyncInvokerManagerTest {
         Assertions.assertEquals(0, manager.invokers.size)
         val lifecycleListener = MockSyncLifecycleListener()
         val methodInfo = MethodInfo(OnCreated::class, lifecycleListener::class.java.declaredMethods[0])
-        manager.addMethods(lifecycleListener, listOf(methodInfo))
+        manager.addMethods(caller, lifecycleListener, listOf(methodInfo))
         Assertions.assertEquals(1, manager.invokers.size)
         Assertions.assertEquals(
             mapOf(methodInfo.annotationKClass to listOf(SyncInvokerInfo(methodInfo.method))),
@@ -43,10 +44,10 @@ class SyncInvokerManagerTest {
     fun removeMethodsOf() {
         Assertions.assertEquals(0, manager.invokers.size)
         val lifecycleListener = MockSyncLifecycleListener()
-        manager.addMethods(lifecycleListener, emptyList())
+        manager.addMethods(caller, lifecycleListener, emptyList())
         Assertions.assertEquals(1, manager.invokers.size)
 
-        manager.removeMethodsOf(lifecycleListener)
+        manager.removeMethodsOf(this, lifecycleListener)
         Assertions.assertEquals(0, manager.invokers.size)
     }
 
@@ -54,9 +55,9 @@ class SyncInvokerManagerTest {
     fun `execute with valid method`() {
         val lifecycleListener = MockSyncLifecycleListener()
         val methodInfo = MethodInfo(OnCreated::class, lifecycleListener::class.java.declaredMethods.first { it.name == "execute" })
-        manager.addMethods(lifecycleListener, listOf(methodInfo))
+        manager.addMethods(caller, lifecycleListener, listOf(methodInfo))
 
-        manager.execute(LifecycleStatus.ON_CREATED)
+        manager.execute(caller, LifecycleStatus.ON_CREATED)
 
         Assertions.assertEquals(1, lifecycleListener.executedCount)
     }
@@ -64,7 +65,7 @@ class SyncInvokerManagerTest {
     @Test
     fun `execute without method`() {
         val lifecycleListener = MockSyncLifecycleListener()
-        manager.execute(LifecycleStatus.ON_CREATED)
+        manager.execute(caller, LifecycleStatus.ON_CREATED)
         Assertions.assertEquals(0, lifecycleListener.executedCount)
     }
 
@@ -72,8 +73,8 @@ class SyncInvokerManagerTest {
     fun executeMissingEvent() {
         val lifecycleListener = MockSyncLifecycleListener()
         val methodInfo = MethodInfo(OnCreated::class, lifecycleListener::class.java.declaredMethods.first { it.name == "execute" })
-        manager.addMethods(lifecycleListener, listOf(methodInfo))
-        manager.executeMissingEvent(lifecycleListener, LifecycleStatus.ON_CREATED)
+        manager.addMethods(caller, lifecycleListener, listOf(methodInfo))
+        manager.executeMissingEvent(caller, lifecycleListener, LifecycleStatus.ON_CREATED)
 
         Assertions.assertEquals(1, lifecycleListener.executedCount)
 

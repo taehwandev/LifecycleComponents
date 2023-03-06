@@ -137,29 +137,17 @@ abstract class LifecycleBottomSheetDialogFragment(
         bundleCollectorStream.updateIntent(IntentDataImpl(Intent(), BundleDataImpl(bundle)))
 
         lifecycle.addObserver(object : DefaultLifecycleObserver {
-            override fun onCreate(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerCreated()
-            }
+            override fun onCreate(owner: LifecycleOwner) = lifecycleNotifier.triggerCreated(this@LifecycleBottomSheetDialogFragment)
 
-            override fun onStart(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerStarted()
-            }
+            override fun onStart(owner: LifecycleOwner) = lifecycleNotifier.triggerStarted(this@LifecycleBottomSheetDialogFragment)
 
-            override fun onResume(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerResumed()
-            }
+            override fun onResume(owner: LifecycleOwner) = lifecycleNotifier.triggerResumed(this@LifecycleBottomSheetDialogFragment)
 
-            override fun onPause(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerPause()
-            }
+            override fun onPause(owner: LifecycleOwner) = lifecycleNotifier.triggerPause(this@LifecycleBottomSheetDialogFragment)
 
-            override fun onStop(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerStop()
-            }
+            override fun onStop(owner: LifecycleOwner) = lifecycleNotifier.triggerStop(this@LifecycleBottomSheetDialogFragment)
 
-            override fun onDestroy(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerDestroy()
-            }
+            override fun onDestroy(owner: LifecycleOwner) = lifecycleNotifier.triggerDestroy(this@LifecycleBottomSheetDialogFragment)
         })
 
     }
@@ -184,11 +172,11 @@ abstract class LifecycleBottomSheetDialogFragment(
     }
 
     override fun add(listener: LifecycleListener) {
-        lifecycleNotifier.add(listener)
+        lifecycleNotifier.add(this, listener)
     }
 
     override fun remove(listener: LifecycleListener) {
-        lifecycleNotifier.remove(listener)
+        lifecycleNotifier.remove(this, listener)
     }
 
 }

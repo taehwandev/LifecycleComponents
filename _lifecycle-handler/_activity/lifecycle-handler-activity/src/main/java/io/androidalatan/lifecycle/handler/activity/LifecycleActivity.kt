@@ -113,29 +113,17 @@ abstract class LifecycleActivity private constructor(
         bundleCollectorStream.updateIntent(IntentDataImpl(activityIntent, BundleDataImpl(bundle)))
 
         lifecycle.addObserver(object : DefaultLifecycleObserver {
-            override fun onCreate(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerCreated()
-            }
+            override fun onCreate(owner: LifecycleOwner) = lifecycleNotifier.triggerCreated(this@LifecycleActivity)
 
-            override fun onStart(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerStarted()
-            }
+            override fun onStart(owner: LifecycleOwner) = lifecycleNotifier.triggerStarted(this@LifecycleActivity)
 
-            override fun onResume(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerResumed()
-            }
+            override fun onResume(owner: LifecycleOwner) = lifecycleNotifier.triggerResumed(this@LifecycleActivity)
 
-            override fun onPause(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerPause()
-            }
+            override fun onPause(owner: LifecycleOwner) = lifecycleNotifier.triggerPause(this@LifecycleActivity)
 
-            override fun onStop(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerStop()
-            }
+            override fun onStop(owner: LifecycleOwner) = lifecycleNotifier.triggerStop(this@LifecycleActivity)
 
-            override fun onDestroy(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerDestroy()
-            }
+            override fun onDestroy(owner: LifecycleOwner) = lifecycleNotifier.triggerDestroy(this@LifecycleActivity)
         })
 
     }
@@ -171,10 +159,10 @@ abstract class LifecycleActivity private constructor(
     }
 
     override fun add(listener: LifecycleListener) {
-        lifecycleNotifier.add(listener)
+        lifecycleNotifier.add(this, listener)
     }
 
     override fun remove(listener: LifecycleListener) {
-        lifecycleNotifier.remove(listener)
+        lifecycleNotifier.remove(this, listener)
     }
 }

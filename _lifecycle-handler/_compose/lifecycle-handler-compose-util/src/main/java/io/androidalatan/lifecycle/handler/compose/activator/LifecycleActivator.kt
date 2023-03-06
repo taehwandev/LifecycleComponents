@@ -1,4 +1,4 @@
-package io.androidalatan.compose.holder.lifecycle.activator
+package io.androidalatan.lifecycle.handler.compose.activator
 
 import android.annotation.SuppressLint
 import androidx.annotation.VisibleForTesting
@@ -8,7 +8,7 @@ import io.androidalatan.lifecycle.handler.api.LifecycleListener
 import io.androidalatan.lifecycle.handler.compose.util.activate
 import kotlin.reflect.KClass
 
-class LifecycleActivator {
+class LifecycleActivator() {
 
     @VisibleForTesting
     internal val cachedLifecycleListener = hashMapOf<KClass<out LifecycleListener>, LifecycleListener>()

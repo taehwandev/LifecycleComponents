@@ -3,6 +3,7 @@ package io.androidalatan.compose.holder
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,12 +14,15 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleObserver
 import io.androidalatan.compose.holder.di.ComposableHolderComponent
-import io.androidalatan.compose.holder.lifecycle.activator.LifecycleActivator
 import io.androidalatan.lifecycle.handler.api.ChildLifecycleSource
 import io.androidalatan.lifecycle.handler.api.LifecycleListener
+import io.androidalatan.lifecycle.handler.compose.activator.LifecycleActivator
 import io.androidalatan.lifecycle.handler.compose.cache.ComposeCacheProvider
 import io.androidalatan.lifecycle.handler.compose.cache.LocalComposeComposeCacheOwner
 import io.androidalatan.lifecycle.handler.compose.cache.composeCacheProvider
+import io.androidalatan.lifecycle.handler.compose.util.LifecycleHandle
+import io.androidalatan.lifecycle.handler.compose.util.LocalLifecycleNotifierOwner
+import io.androidalatan.lifecycle.handler.compose.util.LocalLifecycleSourceOwner
 
 abstract class ComposableHolder(
     private val componentBuilder: ComposableHolderComponent.Builder<*>
@@ -62,9 +66,12 @@ abstract class ComposableHolder(
         } else {
             CompositionLocalProvider(
                 LocalComposeComposeCacheOwner provides composeCache,
+                LocalLifecycleSourceOwner provides this@ComposableHolder
             ) {
                 val lifecycleOwner = LocalLifecycleOwner.current
-                LaunchedEffect(key1 = lifecycleOwner) {
+                val lifecycleNotifier = LocalLifecycleNotifierOwner.current
+                val lifecycleSource = LocalLifecycleSourceOwner.current
+                DisposableEffect(key1 = lifecycleOwner, lifecycleNotifier, lifecycleSource) {
                     var observer: LifecycleObserver? = null
                     observer = LifecycleEventObserver { source, event ->
                         if (event == Lifecycle.Event.ON_DESTROY) {
@@ -73,10 +80,33 @@ abstract class ComposableHolder(
                         }
                     }
                     lifecycleOwner.lifecycle.addObserver(observer)
+
+                    onDispose {
+                        lifecycleOwner.lifecycle.removeObserver(observer)
+                        when (lifecycleOwner.lifecycle.currentState) {
+                            Lifecycle.State.CREATED -> lifecycleNotifier.triggerDestroy(lifecycleSource)
+                            Lifecycle.State.STARTED -> {
+                                lifecycleNotifier.triggerStop(lifecycleSource)
+                                lifecycleNotifier.triggerDestroy(lifecycleSource)
+                            }
+
+                            Lifecycle.State.RESUMED -> {
+                                lifecycleNotifier.triggerPause(lifecycleSource)
+                                lifecycleNotifier.triggerStop(lifecycleSource)
+                                lifecycleNotifier.triggerDestroy(lifecycleSource)
+                            }
+
+                            else -> {
+                            /*do nothing*/
+                            }
+                        }
+                    }
                 }
 
-                lifecycleActivator.activateAllIfNeeded(activateWhenInit = activateAllListeners)
-                render()
+                LifecycleHandle {
+                    lifecycleActivator.activateAllIfNeeded(activateWhenInit = activateAllListeners)
+                    render()
+                }
             }
         }
     }

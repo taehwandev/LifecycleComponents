@@ -19,12 +19,13 @@ internal class InvokerManagerImplTest {
         syncInvokerManager = syncInvokerManager
     )
     private val analyzer = ListenerAnalyzer()
+    private val caller = Any()
 
     @Test
     fun addMethods() {
         val syncLifecycleListener = MockSyncLifecycleListener()
         val methodsOfSync = analyzer.analyze(syncLifecycleListener)
-        manager.addMethods(syncLifecycleListener, methodsOfSync.toList())
+        manager.addMethods(caller, syncLifecycleListener, methodsOfSync.toList())
         Assertions.assertEquals(1, syncInvokerManager.addMethodCount)
         Assertions.assertEquals(0, asyncInvokerManager.addMethodCount)
         syncInvokerManager.reset()
@@ -32,7 +33,7 @@ internal class InvokerManagerImplTest {
 
         val asyncLifecycleListener = MockFlowLifecycleListener()
         val methodsOfAsync = analyzer.analyze(asyncLifecycleListener)
-        manager.addMethods(asyncLifecycleListener, methodsOfAsync.toList())
+        manager.addMethods(caller, asyncLifecycleListener, methodsOfAsync.toList())
         Assertions.assertEquals(0, syncInvokerManager.addMethodCount)
         Assertions.assertEquals(1, asyncInvokerManager.addMethodCount)
 
@@ -41,14 +42,14 @@ internal class InvokerManagerImplTest {
     @Test
     fun removeMethodsOf() {
         val syncLifecycleListener = MockSyncLifecycleListener()
-        manager.removeMethodsOf(syncLifecycleListener)
+        manager.removeMethodsOf(caller, syncLifecycleListener)
         Assertions.assertEquals(1, syncInvokerManager.removeMethodCount)
         Assertions.assertEquals(1, asyncInvokerManager.removeMethodCount)
         syncInvokerManager.reset()
         asyncInvokerManager.reset()
 
         val asyncLifecycleListener = MockFlowLifecycleListener()
-        manager.removeMethodsOf(asyncLifecycleListener)
+        manager.removeMethodsOf(caller, asyncLifecycleListener)
         Assertions.assertEquals(1, syncInvokerManager.removeMethodCount)
         Assertions.assertEquals(1, asyncInvokerManager.removeMethodCount)
         syncInvokerManager.reset()
@@ -58,7 +59,7 @@ internal class InvokerManagerImplTest {
 
     @Test
     fun execute() {
-        manager.execute(LifecycleStatus.ON_CREATED)
+        manager.execute(manager, LifecycleStatus.ON_CREATED)
         Assertions.assertEquals(1, syncInvokerManager.executeCount)
         Assertions.assertEquals(1, asyncInvokerManager.executeCount)
     }
@@ -67,7 +68,7 @@ internal class InvokerManagerImplTest {
     fun executeMissingEvent() {
         val lifecycleListener = mock<LifecycleListener>()
         val currentStatus = LifecycleStatus.ON_CREATED
-        manager.executeMissingEvent(lifecycleListener, currentStatus)
+        manager.executeMissingEvent(caller, lifecycleListener, currentStatus)
         Assertions.assertEquals(1, syncInvokerManager.executeMissingCount)
         Assertions.assertEquals(lifecycleListener, syncInvokerManager.lastLifecycleListener)
         Assertions.assertEquals(currentStatus, syncInvokerManager.lastExecutedStatus)

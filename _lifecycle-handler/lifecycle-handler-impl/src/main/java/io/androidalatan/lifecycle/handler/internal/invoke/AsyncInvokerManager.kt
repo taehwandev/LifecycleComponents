@@ -15,11 +15,15 @@ class AsyncInvokerManager(
     private val invokeAdapters: List<InvokeAdapter<*>>,
 ) : InvokerManager {
 
+    val callers = hashMapOf<Any, HashSet<LifecycleListener>>()
+
     val invokers = hashMapOf<LifecycleListener, MutableMap<KClass<out Annotation>, MutableList<InvokeInfo>>>()
 
     val invokedMap = hashMapOf<LifecycleListener, MutableMap<KClass<out Annotation>, MutableList<Any>>>()
 
-    override fun addMethods(lifecycleListener: LifecycleListener, methods: List<MethodInfo>) {
+    override fun addMethods(caller: Any, lifecycleListener: LifecycleListener, methods: List<MethodInfo>) {
+        callers.getOrPut(caller) { hashSetOf() }
+            .add(lifecycleListener)
         invokers[lifecycleListener] = methods
             .map { (annotation, method) ->
                 val parameters = method.parameterTypes.mapNotNull {
@@ -31,7 +35,8 @@ class AsyncInvokerManager(
             .groupByTo(mutableMapOf(), { it.first }, { it.second })
     }
 
-    override fun removeMethodsOf(lifecycleListener: LifecycleListener) {
+    override fun removeMethodsOf(caller: Any, lifecycleListener: LifecycleListener) {
+        callers[caller]?.remove(lifecycleListener)
         invokers[lifecycleListener]?.forEach { invoker ->
             invoker.value.clear()
         }
@@ -39,24 +44,25 @@ class AsyncInvokerManager(
         invokers.remove(lifecycleListener)
     }
 
-    override fun execute(currentStatus: LifecycleStatus) {
+    override fun execute(caller: Any, currentStatus: LifecycleStatus) {
         when (currentStatus) {
             LifecycleStatus.UNKNOWN -> {
                 // do nothing
             }
-            LifecycleStatus.ON_CREATED -> invokeMethod(CreatedToDestroy::class)
-            LifecycleStatus.ON_STARTED -> invokeMethod(StartedToStop::class)
-            LifecycleStatus.ON_RESUMED -> invokeMethod(ResumedToPause::class)
-            LifecycleStatus.ON_PAUSE -> revokeMethod(ResumedToPause::class)
-            LifecycleStatus.ON_STOP -> revokeMethod(StartedToStop::class)
+
+            LifecycleStatus.ON_CREATED -> invokeMethod(caller, CreatedToDestroy::class)
+            LifecycleStatus.ON_STARTED -> invokeMethod(caller, StartedToStop::class)
+            LifecycleStatus.ON_RESUMED -> invokeMethod(caller, ResumedToPause::class)
+            LifecycleStatus.ON_PAUSE -> revokeMethod(caller, ResumedToPause::class)
+            LifecycleStatus.ON_STOP -> revokeMethod(caller, StartedToStop::class)
             LifecycleStatus.ON_DESTROY -> {
-                revokeMethod(CreatedToDestroy::class)
-                clearCachedMethod()
+                revokeMethod(caller, CreatedToDestroy::class)
+                clearCachedMethod(caller)
             }
         }
     }
 
-    override fun executeMissingEvent(lifecycleListener: LifecycleListener, currentStatus: LifecycleStatus) {
+    override fun executeMissingEvent(caller: Any, lifecycleListener: LifecycleListener, currentStatus: LifecycleStatus) {
 
         if (currentStatus == LifecycleStatus.UNKNOWN) return
 
@@ -87,10 +93,14 @@ class AsyncInvokerManager(
         }
     }
 
-    private fun invokeMethod(annotationKlass: KClass<out Annotation>) {
-        invokers.forEach { (lifecycleListener, methods) ->
-            executeLifecycleListener(annotationKlass, methods, lifecycleListener)
+    private fun invokeMethod(caller: Any, annotationKlass: KClass<out Annotation>) {
+        val listeners = callers.getOrElse(caller) { hashSetOf() }
+        invokers.filter { (lifecycleListener, _) ->
+            listeners.contains(lifecycleListener)
         }
+            .forEach { (lifecycleListener, methods) ->
+                executeLifecycleListener(annotationKlass, methods, lifecycleListener)
+            }
     }
 
     private fun executeLifecycleListener(
@@ -116,10 +126,13 @@ class AsyncInvokerManager(
         }
     }
 
-    private fun revokeMethod(annotationKClass: KClass<out Annotation>) {
-        invokedMap.values.map {
-            it[annotationKClass] ?: mutableListOf()
-        }
+    private fun revokeMethod(caller: Any, annotationKClass: KClass<out Annotation>) {
+        val listeners = callers.getOrElse(caller) { hashSetOf() }
+
+        invokedMap.filter { (listener, _) -> listeners.contains(listener) }
+            .values.map {
+                it[annotationKClass] ?: mutableListOf()
+            }
             .forEach { invokedList ->
                 invokedList.forEach { invoked ->
                     invokeAdapters.firstOrNull { it.acceptableRevoke(invoked) }
@@ -129,11 +142,13 @@ class AsyncInvokerManager(
             }
     }
 
-    private fun clearCachedMethod() {
-        invokedMap.values.forEach { methodCache ->
+    private fun clearCachedMethod(caller: Any) {
+        val lifecycleListeners = callers[caller] ?: return
+        invokedMap.filter { (listener, _) -> lifecycleListeners.contains(listener) }.values.forEach { methodCache ->
             methodCache.values.forEach { invokedMethod -> invokedMethod.clear() }
             methodCache.clear()
         }
-        invokedMap.clear()
+        lifecycleListeners.forEach { invokedMap.remove(it) }
+        callers[caller]?.clear()
     }
 }

@@ -8,14 +8,15 @@ import io.androidalatan.lifecycle.handler.api.LifecycleListener
 @Composable
 fun <T : LifecycleListener> T.activate(): T {
     val lifecycleNotifier = LocalLifecycleNotifierOwner.current
+    val lifecycleSource = LocalLifecycleSourceOwner.current
 
     val lifecycleListener = remember { this }
 
     DisposableEffect(lifecycleListener) {
-        lifecycleNotifier.add(lifecycleListener)
+        lifecycleNotifier.add(lifecycleSource, lifecycleListener)
 
         onDispose {
-            lifecycleNotifier.remove(lifecycleListener)
+            lifecycleNotifier.remove(lifecycleSource, lifecycleListener)
         }
     }
     return lifecycleListener

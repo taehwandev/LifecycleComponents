@@ -25,7 +25,7 @@ import io.androidalatan.component.view.compose.ComposeViewInteractionTriggerImpl
 import io.androidalatan.component.view.compose.api.ComposeKeyboardController
 import io.androidalatan.compose.dialog.ComposeAlertDialogBuilderFactoryImpl
 import io.androidalatan.compose.dialog.api.ComposeAlertDialogBuilderFactory
-import io.androidalatan.compose.holder.lifecycle.activator.LifecycleActivator
+import io.androidalatan.lifecycle.handler.compose.activator.LifecycleActivator
 import io.androidalatan.coroutine.dispatcher.api.DispatcherProvider
 import io.androidalatan.lifecycle.handler.activity.LifecycleNotifierImpl
 import io.androidalatan.lifecycle.handler.api.LifecycleListener
@@ -36,7 +36,9 @@ import io.androidalatan.lifecycle.handler.compose.activity.localowners.LocalComp
 import io.androidalatan.lifecycle.handler.compose.cache.ComposeCacheProvider
 import io.androidalatan.lifecycle.handler.compose.cache.LocalComposeComposeCacheOwner
 import io.androidalatan.lifecycle.handler.compose.cache.composeCacheProvider
+import io.androidalatan.lifecycle.handler.compose.util.LifecycleHandle
 import io.androidalatan.lifecycle.handler.compose.util.LocalLifecycleNotifierOwner
+import io.androidalatan.lifecycle.handler.compose.util.LocalLifecycleSourceOwner
 import io.androidalatan.lifecycle.handler.internal.invoke.AsyncInvokerManager
 import io.androidalatan.lifecycle.handler.internal.invoke.InvokerManagerImpl
 import io.androidalatan.lifecycle.handler.internal.invoke.SyncInvokerManager
@@ -142,6 +144,7 @@ abstract class ComposeLifecycleActivity private constructor(
                 LocalLifecycleNotifierOwner provides lifecycleNotifier,
                 LocalComposeKeyboardControllerOwner provides composeKeyboardController,
                 LocalComposeComposeCacheOwner provides composeCache,
+                LocalLifecycleSourceOwner provides this@ComposeLifecycleActivity,
             ) {
                 LifecycleHandle {
                     (composeAlertDialogBuilderFactory as ComposeAlertDialogBuilderFactoryImpl).activate()

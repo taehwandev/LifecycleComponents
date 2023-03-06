@@ -108,29 +108,17 @@ abstract class LifecycleFragment private constructor(
         }
         super.onAttach(context)
         lifecycle.addObserver(object : DefaultLifecycleObserver {
-            override fun onCreate(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerCreated()
-            }
+            override fun onCreate(owner: LifecycleOwner) = lifecycleNotifier.triggerCreated(this@LifecycleFragment)
 
-            override fun onStart(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerStarted()
-            }
+            override fun onStart(owner: LifecycleOwner) = lifecycleNotifier.triggerStarted(this@LifecycleFragment)
 
-            override fun onResume(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerResumed()
-            }
+            override fun onResume(owner: LifecycleOwner) = lifecycleNotifier.triggerResumed(this@LifecycleFragment)
 
-            override fun onPause(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerPause()
-            }
+            override fun onPause(owner: LifecycleOwner) = lifecycleNotifier.triggerPause(this@LifecycleFragment)
 
-            override fun onStop(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerStop()
-            }
+            override fun onStop(owner: LifecycleOwner) = lifecycleNotifier.triggerStop(this@LifecycleFragment)
 
-            override fun onDestroy(owner: LifecycleOwner) {
-                lifecycleNotifier.triggerDestroy()
-            }
+            override fun onDestroy(owner: LifecycleOwner) = lifecycleNotifier.triggerDestroy(this@LifecycleFragment)
         })
     }
 
@@ -181,10 +169,10 @@ abstract class LifecycleFragment private constructor(
     }
 
     override fun add(listener: LifecycleListener) {
-        lifecycleNotifier.add(listener)
+        lifecycleNotifier.add(this, listener)
     }
 
     override fun remove(listener: LifecycleListener) {
-        lifecycleNotifier.remove(listener)
+        lifecycleNotifier.remove(this, listener)
     }
 }

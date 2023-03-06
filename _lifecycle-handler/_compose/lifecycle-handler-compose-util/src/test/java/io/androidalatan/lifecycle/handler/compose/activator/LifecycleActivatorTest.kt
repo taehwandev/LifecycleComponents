@@ -1,9 +1,9 @@
-package io.androidalatan.compose.holder.lifecycle.activator
+package io.androidalatan.lifecycle.handler.compose.activator
 
-import org.mockito.kotlin.mock
 import io.androidalatan.lifecycle.handler.api.LifecycleListener
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.mock
 
 class LifecycleActivatorTest {
 

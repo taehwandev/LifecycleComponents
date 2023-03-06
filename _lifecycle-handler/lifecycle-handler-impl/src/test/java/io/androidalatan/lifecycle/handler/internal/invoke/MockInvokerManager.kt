@@ -11,15 +11,19 @@ class MockInvokerManager : InvokerManager {
     var executeMissingCount = 0
     var lastLifecycleListener: LifecycleListener? = null
     var lastExecutedStatus: LifecycleStatus? = null
-    override fun addMethods(lifecycleListener: LifecycleListener, methods: List<MethodInfo>) {
+    override fun addMethods(
+        caller: Any,
+        lifecycleListener: LifecycleListener,
+        methods: List<MethodInfo>
+    ) {
         addMethodCount++
     }
 
-    override fun removeMethodsOf(lifecycleListener: LifecycleListener) {
+    override fun removeMethodsOf(caller: Any, lifecycleListener: LifecycleListener) {
         removeMethodCount++
     }
 
-    override fun execute(currentStatus: LifecycleStatus) {
+    override fun execute(caller: Any, currentStatus: LifecycleStatus) {
         executeCount++
     }
 
@@ -29,7 +33,11 @@ class MockInvokerManager : InvokerManager {
         executeCount = 0
     }
 
-    override fun executeMissingEvent(lifecycleListener: LifecycleListener, currentStatus: LifecycleStatus) {
+    override fun executeMissingEvent(
+        caller: Any,
+        lifecycleListener: LifecycleListener,
+        currentStatus: LifecycleStatus
+    ) {
         executeMissingCount++
         lastLifecycleListener = lifecycleListener
         lastExecutedStatus = currentStatus

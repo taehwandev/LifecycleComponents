@@ -2,13 +2,13 @@ package io.androidalatan.lifecycle.handler.api
 
 interface LifecycleNotifier {
 
-    fun add(lifecycleListener: LifecycleListener)
-    fun remove(lifecycleListener: LifecycleListener)
+    fun add(lifecycleSource: LifecycleSource, lifecycleListener: LifecycleListener)
+    fun remove(lifecycleSource: LifecycleSource, lifecycleListener: LifecycleListener)
 
-    fun triggerCreated()
-    fun triggerStarted()
-    fun triggerResumed()
-    fun triggerPause()
-    fun triggerStop()
-    fun triggerDestroy()
+    fun triggerCreated(lifecycleSource: LifecycleSource)
+    fun triggerStarted(lifecycleSource: LifecycleSource)
+    fun triggerResumed(lifecycleSource: LifecycleSource)
+    fun triggerPause(lifecycleSource: LifecycleSource)
+    fun triggerStop(lifecycleSource: LifecycleSource)
+    fun triggerDestroy(lifecycleSource: LifecycleSource)
 }

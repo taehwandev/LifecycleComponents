@@ -34,27 +34,27 @@ abstract class LifecycleService : androidx.lifecycle.LifecycleService(), Lifecyc
         super.onCreate()
         serviceInit()
         lifecycleNotifier.run {
-            triggerCreated()
-            triggerStarted()
-            triggerResumed()
+            triggerCreated(this@LifecycleService)
+            triggerStarted(this@LifecycleService)
+            triggerResumed(this@LifecycleService)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         lifecycleNotifier.run {
-            triggerPause()
-            triggerStop()
-            triggerDestroy()
+            triggerPause(this@LifecycleService)
+            triggerStop(this@LifecycleService)
+            triggerDestroy(this@LifecycleService)
         }
     }
 
     override fun add(listener: LifecycleListener) {
-        lifecycleNotifier.add(listener)
+        lifecycleNotifier.add(this, listener)
     }
 
     override fun remove(listener: LifecycleListener) {
-        lifecycleNotifier.remove(listener)
+        lifecycleNotifier.remove(this, listener)
     }
 
     abstract fun serviceInit()

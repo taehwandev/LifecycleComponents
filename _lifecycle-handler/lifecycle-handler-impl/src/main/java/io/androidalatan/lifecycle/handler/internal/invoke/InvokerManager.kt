@@ -5,8 +5,8 @@ import io.androidalatan.lifecycle.handler.internal.model.LifecycleStatus
 import io.androidalatan.lifecycle.handler.internal.model.MethodInfo
 
 interface InvokerManager {
-    fun addMethods(lifecycleListener: LifecycleListener, methods: List<MethodInfo>)
-    fun removeMethodsOf(lifecycleListener: LifecycleListener)
-    fun execute(currentStatus: LifecycleStatus)
-    fun executeMissingEvent(lifecycleListener: LifecycleListener, currentStatus: LifecycleStatus)
+    fun addMethods(caller: Any, lifecycleListener: LifecycleListener, methods: List<MethodInfo>)
+    fun removeMethodsOf(caller: Any, lifecycleListener: LifecycleListener)
+    fun execute(caller: Any, currentStatus: LifecycleStatus)
+    fun executeMissingEvent(caller: Any, lifecycleListener: LifecycleListener, currentStatus: LifecycleStatus)
 }

@@ -30,7 +30,9 @@ import io.androidalatan.lifecycle.handler.compose.activity.localowners.LocalComp
 import io.androidalatan.lifecycle.handler.compose.cache.ComposeCacheProvider
 import io.androidalatan.lifecycle.handler.compose.cache.LocalComposeComposeCacheOwner
 import io.androidalatan.lifecycle.handler.compose.cache.composeCacheProvider
+import io.androidalatan.lifecycle.handler.compose.util.LifecycleHandle
 import io.androidalatan.lifecycle.handler.compose.util.LocalLifecycleNotifierOwner
+import io.androidalatan.lifecycle.handler.compose.util.LocalLifecycleSourceOwner
 import io.androidalatan.lifecycle.handler.internal.invoke.AsyncInvokerManager
 import io.androidalatan.lifecycle.handler.internal.invoke.InvokerManagerImpl
 import io.androidalatan.lifecycle.handler.internal.invoke.SyncInvokerManager
@@ -108,6 +110,7 @@ abstract class ComposeLifecycleBottomSheetDialogFragment(
                 LocalComposeEventTriggerOwner provides composeViewInteractionTrigger,
                 LocalLifecycleNotifierOwner provides lifecycleNotifier,
                 LocalComposeComposeCacheOwner provides composeCache,
+                LocalLifecycleSourceOwner provides this,
             ) {
                 LifecycleHandle {
                     contentView()
@@ -155,11 +158,11 @@ abstract class ComposeLifecycleBottomSheetDialogFragment(
     }
 
     override fun add(listener: LifecycleListener) {
-        lifecycleNotifier.add(listener)
+        lifecycleNotifier.add(this, listener)
     }
 
     override fun remove(listener: LifecycleListener) {
-        lifecycleNotifier.remove(listener)
+        lifecycleNotifier.remove(this, listener)
     }
 
 }

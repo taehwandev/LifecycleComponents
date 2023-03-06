@@ -19,9 +19,14 @@ import kotlin.reflect.KClass
 class SyncInvokerManager(
     private val coroutineInvokerManager: CoroutineInvokerManager,
 ) : InvokerManager {
+
+    val callers = hashMapOf<Any, HashSet<LifecycleListener>>()
+
     val invokers = hashMapOf<LifecycleListener, Map<KClass<out Annotation>, List<SyncInvokerInfo>>>()
 
-    override fun addMethods(lifecycleListener: LifecycleListener, methods: List<MethodInfo>) {
+    override fun addMethods(caller: Any, lifecycleListener: LifecycleListener, methods: List<MethodInfo>) {
+        callers.getOrPut(caller) { hashSetOf() }
+            .add(lifecycleListener)
         invokers[lifecycleListener] = methods.groupBy(
             { it.annotationKClass },
             {
@@ -37,28 +42,33 @@ class SyncInvokerManager(
             })
     }
 
-    override fun removeMethodsOf(lifecycleListener: LifecycleListener) {
+    override fun removeMethodsOf(caller: Any, lifecycleListener: LifecycleListener) {
+        callers[caller]?.remove(lifecycleListener)
         invokers.remove(lifecycleListener)
     }
 
-    override fun execute(currentStatus: LifecycleStatus) {
+    override fun execute(caller: Any, currentStatus: LifecycleStatus) {
         if (currentStatus == LifecycleStatus.UNKNOWN) {
             return
         }
 
         val mappedAnnotation = convert(currentStatus)
-        invokers.filter { invokeInfo ->
-            invokeInfo.value[mappedAnnotation].isNullOrEmpty()
-                .not()
-        }
+        val listeners = callers.getOrElse(caller) { hashSetOf() }
+        invokers.filter { (listener, _) -> listeners.contains(listener) }
+            .filter { invokeInfo ->
+                invokeInfo.value[mappedAnnotation].isNullOrEmpty()
+                    .not()
+            }
             .forEach { (instance, methods) ->
                 invokeMethods(methods, mappedAnnotation, instance)
             }
     }
 
-    override fun executeMissingEvent(lifecycleListener: LifecycleListener, currentStatus: LifecycleStatus) {
+    override fun executeMissingEvent(caller: Any, lifecycleListener: LifecycleListener, currentStatus: LifecycleStatus) {
         val annotationKlass = convert(currentStatus) ?: return
-        invokers.filter { (_lifecycleListener, methods) ->
+        val listeners = callers.getOrElse(caller) { hashSetOf() }
+        invokers.filter { (listener, _) -> listeners.contains(listener) }
+            .filter { (_lifecycleListener, methods) ->
             lifecycleListener == _lifecycleListener && methods[annotationKlass].isNullOrEmpty()
                 .not()
         }
@@ -78,6 +88,7 @@ class SyncInvokerManager(
                     invokerCoroutines -> {
                         coroutineInvokerManager.invokeSuspendMethod(method, instance, launchDispatcherUI)
                     }
+
                     else -> {
                         method.invoke(instance)
                     }

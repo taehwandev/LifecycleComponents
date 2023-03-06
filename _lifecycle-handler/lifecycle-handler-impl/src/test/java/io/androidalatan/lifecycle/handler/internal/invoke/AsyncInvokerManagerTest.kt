@@ -26,13 +26,14 @@ internal class AsyncInvokerManagerTest {
             listOf(FlowInvokeAdapter(TestScope()) {})
         )
     private val analyzer = ListenerAnalyzer()
+    private val caller = Any()
 
     @Test
     fun addMethods() {
         val lifecycleListener = MockFlowLifecycleListener()
         val methods = analyzer.analyze(lifecycleListener)
 
-        manager.addMethods(lifecycleListener, methods.toList())
+        manager.addMethods(caller, lifecycleListener, methods.toList())
 
         Assertions.assertEquals(1, manager.invokers.size)
         Assertions.assertEquals(2, manager.invokers[lifecycleListener]!!.size)
@@ -48,7 +49,7 @@ internal class AsyncInvokerManagerTest {
     fun removeMethodsOf() {
         val lifecycleListener = MockFlowLifecycleListener()
         val methods = analyzer.analyze(lifecycleListener)
-        manager.addMethods(lifecycleListener, methods.toList())
+        manager.addMethods(caller, lifecycleListener, methods.toList())
         val invokers = manager.invokers
         Assertions.assertEquals(1, invokers.size)
 
@@ -60,7 +61,7 @@ internal class AsyncInvokerManagerTest {
         Assertions.assertEquals(2, invokerForCreatedToDestroy?.size)
         Assertions.assertEquals(1, invokerForResumeToPause?.size)
 
-        manager.removeMethodsOf(lifecycleListener)
+        manager.removeMethodsOf(this, lifecycleListener)
         Assertions.assertEquals(0, invokerForCreatedToDestroy?.size)
         Assertions.assertEquals(0, invokerForResumeToPause?.size)
         Assertions.assertEquals(0, invokers.size)
@@ -74,10 +75,10 @@ internal class AsyncInvokerManagerTest {
         Assertions.assertEquals(0, lifecycleListener.executedUnitCount)
         Assertions.assertEquals(0, lifecycleListener.executedFlowCount)
         val methods = analyzer.analyze(lifecycleListener)
-        manager.addMethods(lifecycleListener, methods.toList())
+        manager.addMethods(caller, lifecycleListener, methods.toList())
 
-        manager.execute(LifecycleStatus.ON_CREATED)
-        manager.execute(LifecycleStatus.ON_RESUMED)
+        manager.execute(caller, LifecycleStatus.ON_CREATED)
+        manager.execute(caller, LifecycleStatus.ON_RESUMED)
         Assertions.assertEquals(1, manager.invokedMap.size)
         Assertions.assertEquals(1, manager.invokedMap[lifecycleListener]!![CreatedToDestroy::class]!!.size)
         Assertions.assertEquals(1, manager.invokedMap[lifecycleListener]!![ResumedToPause::class]!!.size)
@@ -87,11 +88,11 @@ internal class AsyncInvokerManagerTest {
         Assertions.assertEquals(0, lifecycleListener.executedUnitCount)
         Assertions.assertEquals(2, lifecycleListener.executedFlowCount)
 
-        manager.execute(LifecycleStatus.ON_PAUSE)
+        manager.execute(caller, LifecycleStatus.ON_PAUSE)
         Assertions.assertEquals(0, manager.invokedMap[lifecycleListener]!![ResumedToPause::class]!!.size)
         Assertions.assertEquals(1, manager.invokedMap[lifecycleListener]!![CreatedToDestroy::class]!!.size)
 
-        manager.execute(LifecycleStatus.ON_DESTROY)
+        manager.execute(caller, LifecycleStatus.ON_DESTROY)
         Assertions.assertEquals(0, manager.invokedMap.size)
     }
 
@@ -101,8 +102,8 @@ internal class AsyncInvokerManagerTest {
         Assertions.assertEquals(0, lifecycleListener.executedUnitCount)
         Assertions.assertEquals(0, lifecycleListener.executedFlowCount)
         val methods = analyzer.analyze(lifecycleListener)
-        manager.addMethods(lifecycleListener, methods.toList())
+        manager.addMethods(caller, lifecycleListener, methods.toList())
 
-        manager.executeMissingEvent(lifecycleListener, LifecycleStatus.ON_CREATED)
+        manager.executeMissingEvent(caller, lifecycleListener, LifecycleStatus.ON_CREATED)
     }
 }

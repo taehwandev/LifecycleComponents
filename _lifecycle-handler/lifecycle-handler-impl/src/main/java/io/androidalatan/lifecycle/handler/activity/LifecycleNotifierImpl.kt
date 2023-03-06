@@ -6,6 +6,7 @@ import io.androidalatan.lifecycle.handler.internal.invoke.InvokerManager
 import io.androidalatan.lifecycle.handler.internal.model.LifecycleStatus
 import io.androidalatan.lifecycle.handler.api.LifecycleListener
 import io.androidalatan.lifecycle.handler.api.LifecycleNotifier
+import io.androidalatan.lifecycle.handler.api.LifecycleSource
 
 class LifecycleNotifierImpl(private val invokerManager: InvokerManager) : LifecycleNotifier {
 
@@ -16,12 +17,12 @@ class LifecycleNotifierImpl(private val invokerManager: InvokerManager) : Lifecy
     @VisibleForTesting
     internal val cachedListeners = mutableSetOf<LifecycleListener>()
 
-    override fun add(lifecycleListener: LifecycleListener) {
+    override fun add(lifecycleSource: LifecycleSource, lifecycleListener: LifecycleListener) {
         synchronized(this) {
             if (cachedListeners.contains(lifecycleListener)) return@synchronized
             cachedListeners.add(lifecycleListener)
             val methods = lifecycleListenerAnalyzer.analyze(lifecycleListener)
-            invokerManager.addMethods(lifecycleListener, methods.toList())
+            invokerManager.addMethods(lifecycleSource, lifecycleListener, methods.toList())
 
             when (currentStatus) {
                 LifecycleStatus.ON_CREATED, LifecycleStatus.ON_STOP -> listOf(LifecycleStatus.ON_CREATED)
@@ -37,12 +38,12 @@ class LifecycleNotifierImpl(private val invokerManager: InvokerManager) : Lifecy
                 else -> emptyList()
             }
                 .forEach {
-                    invokerManager.executeMissingEvent(lifecycleListener, it)
+                    invokerManager.executeMissingEvent(lifecycleSource, lifecycleListener, it)
                 }
         }
     }
 
-    override fun remove(lifecycleListener: LifecycleListener) {
+    override fun remove(lifecycleSource: LifecycleSource, lifecycleListener: LifecycleListener) {
         synchronized(this) {
             if (!cachedListeners.contains(lifecycleListener)) return@synchronized
             cachedListeners.remove(lifecycleListener)
@@ -61,56 +62,56 @@ class LifecycleNotifierImpl(private val invokerManager: InvokerManager) : Lifecy
                 else -> emptyList()
             }
                 .forEach {
-                    invokerManager.executeMissingEvent(lifecycleListener, it)
+                    invokerManager.executeMissingEvent(lifecycleSource, lifecycleListener, it)
                 }
 
-            invokerManager.removeMethodsOf(lifecycleListener)
+            invokerManager.removeMethodsOf(lifecycleSource, lifecycleListener)
         }
     }
 
-    override fun triggerCreated() {
+    override fun triggerCreated(lifecycleSource: LifecycleSource) {
         synchronized(this) {
             currentStatus = LifecycleStatus.ON_CREATED
-            executeInvokeManager()
+            executeInvokeManager(lifecycleSource)
         }
     }
 
-    private fun executeInvokeManager() {
-        invokerManager.execute(currentStatus)
+    private fun executeInvokeManager(lifecycleSource: LifecycleSource) {
+        invokerManager.execute(lifecycleSource, currentStatus)
     }
 
-    override fun triggerStarted() {
+    override fun triggerStarted(lifecycleSource: LifecycleSource) {
         synchronized(this) {
             currentStatus = LifecycleStatus.ON_STARTED
-            executeInvokeManager()
+            executeInvokeManager(lifecycleSource)
         }
     }
 
-    override fun triggerResumed() {
+    override fun triggerResumed(lifecycleSource: LifecycleSource) {
         synchronized(this) {
             currentStatus = LifecycleStatus.ON_RESUMED
-            executeInvokeManager()
+            executeInvokeManager(lifecycleSource)
         }
     }
 
-    override fun triggerPause() {
+    override fun triggerPause(lifecycleSource: LifecycleSource) {
         synchronized(this) {
             currentStatus = LifecycleStatus.ON_PAUSE
-            executeInvokeManager()
+            executeInvokeManager(lifecycleSource)
         }
     }
 
-    override fun triggerStop() {
+    override fun triggerStop(lifecycleSource: LifecycleSource) {
         synchronized(this) {
             currentStatus = LifecycleStatus.ON_STOP
-            executeInvokeManager()
+            executeInvokeManager(lifecycleSource)
         }
     }
 
-    override fun triggerDestroy() {
+    override fun triggerDestroy(lifecycleSource: LifecycleSource) {
         synchronized(this) {
             currentStatus = LifecycleStatus.ON_DESTROY
-            executeInvokeManager()
+            executeInvokeManager(lifecycleSource)
         }
     }
 }
