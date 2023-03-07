@@ -13,6 +13,18 @@ There is 2 different ways to declare dependencies
 
 1. app/build.gradle.kts
 ```kotlin
+// prerequisite
+implementation("com.google.android.material:material:${material_version}")
+
+// add this only
+implementation(platform("com.github.android-alatan.lifecyclecomponents:bom-compose-app:$version"))
+
+```
+<details>
+    <summary>way to add depdencies manually</summary>
+
+```
+// or manually add below
 implementation("com.github.android-alatan.lifecyclecomponents:lifecycle-handler-activity:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:lifecycle-handler-impl:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:result-handler:$version")
@@ -28,25 +40,19 @@ implementation("com.github.android-alatan.lifecyclecomponents:coroutine-api:$ver
 implementation("com.github.android-alatan.lifecyclecomponents:lifecycle-handler-annotations:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:lifecycle-handler-api:$version")
 
-// prerequisite
-implementation("com.google.android.material:material:${material_version}")
-
 // below dependencies are optional
 implementation("com.github.android-alatan.lifecyclecomponents:dagger-scope:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:dagger-base-builder:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:lifecycle-handler-activity-dagger:$version")
 
 implementation("com.github.android-alatan.lifecyclecomponents:bundle-collector-api:$version")
-implementation("com.github.android-alatan.lifecyclecomponents:bundle-collector-rx-adapter:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:bundle-collector-flow-adapter:$version")
 testImplementation("com.github.android-alatan.lifecyclecomponents:bundle-collector-assertion:$version")
 
-implementation("com.github.android-alatan.lifecyclecomponents:lifecycle-handler-invokeadapter-rx:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:lifecycle-handler-invokeadapter-flow:$version")
 testImplementation("com.github.android-alatan.lifecyclecomponents:lifecycle-handler-assertion:$version")
 
 implementation("com.github.android-alatan.lifecyclecomponents:back-key-handler-api:$version")
-implementation("com.github.android-alatan.lifecyclecomponents:back-key-handler-adapter-rx:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:back-key-handler-adapter-flow:$version")
 testImplementation("com.github.android-alatan.lifecyclecomponents:back-key-handler-assertion:$version")
 
@@ -55,43 +61,77 @@ implementation("com.github.android-alatan.lifecyclecomponents:router-web-api:$ve
 testImplementation("com.github.android-alatan.lifecyclecomponents:router-assertion:$version")
 
 implementation("com.github.android-alatan.lifecyclecomponents:view-event-api:$version")
-implementation("com.github.android-alatan.lifecyclecomponents:view-event-adapter-rx:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:view-event-adapter-flow:$version")
 testImplementation("com.github.android-alatan.lifecyclecomponents:view-event-assertion:$version")
 
 implementation("com.github.android-alatan.lifecyclecomponents:result-handler-api:$version")
-implementation("com.github.android-alatan.lifecyclecomponents:result-handler-rx-adapter:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:result-handler-flow-adapter:$version")
 testImplementation("com.github.android-alatan.lifecyclecomponents:result-handler-assertion:$version")
 
 implementation("com.github.android-alatan.lifecyclecomponents:request-permission-api:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:request-permission-flow-handler:$version")
-implementation("com.github.android-alatan.lifecyclecomponents:request-permission-rx-handler:$version")
 testImplementation("com.github.android-alatan.lifecyclecomponents:request-permission-assertion:$version")
 
 // for compose
 implementation("com.github.android-alatan.lifecyclecomponents:composable-lifecycle-listener-activator:$version")
-implementation("com.github.android-alatan.lifecyclecomponents:provided-compose-local-api:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:lifecycle-handler-compose-util:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:lifecycle-handler-compose-activity-dagger:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:composable-holder:$version")
-implementation("com.github.android-alatan.lifecyclecomponents:provided-compose-local-ksp:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:view-event-compose-extension-api:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:view-event-compose-extension-impl:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:view-event-compose-impl:$version")
 implementation("com.github.android-alatan.lifecyclecomponents:lifecycle-handler-compose-activity:$version")
 ```
+</details>
+
 In `app` module, you should declare lots of dependencies.
 
 But there are small dependencies in libs  
 
 2. libs/build.gradle.kts
 ```kotlin
-implementation("com.github.android-alatan.lifecyclecomponents:lifecycle-handler-activity:$version")
-implementation("com.github.android-alatan.lifecyclecomponents:lifecycle-handler-annotations:$version")
+// for activity
+implementation(platform("com.github.android-alatan.lifecyclecomponents:bom-compose-activity:$version"))
+// for composable-holder
+implementation(platform("com.github.android-alatan.lifecyclecomponents:bom-compose-holder:$version"))
 
+
+// or manually add these
 implementation("com.google.android.material:material:${material_version}")
 ```
+
+<details>
+    <summary>way to add dependencies manually</summary>
+
+```kotlin
+implementation("com.github.android-alatan.lifecyclecomponents:lifecycle-handler-compose-activity-dagger:$version")
+implementation("com.github.android-alatan.lifecyclecomponents:composable-holder:$version")
+implementation("com.github.android-alatan.lifecyclecomponents:view-event-compose-extension-api:$version")
+implementation("com.github.android-alatan.lifecyclecomponents:lifecycle-handler-compose-util:$version")
+
+implementation("com.github.android-alatan.lifecyclecomponents:request-permission-api:$version")
+implementation("com.github.android-alatan.lifecyclecomponents:request-permission-flow-handler:$version")
+
+implementation("com.github.android-alatan.lifecyclecomponents:result-handler-api:$version")
+implementation("com.github.android-alatan.lifecyclecomponents:result-handler-flow-adapter:$version")
+
+implementation("com.github.android-alatan.lifecyclecomponents:view-event-api:$version")
+implementation("com.github.android-alatan.lifecyclecomponents:view-event-adapter-flow:$version")
+
+implementation("com.github.android-alatan.lifecyclecomponents:router-api:$version")
+
+implementation("com.github.android-alatan.lifecyclecomponents:back-key-handler-api:$version")
+implementation("com.github.android-alatan.lifecyclecomponents:back-key-handler-adapter-flow:$version")
+
+implementation("com.github.android-alatan.lifecyclecomponents:bundle-collector-api:$version")
+implementation("com.github.android-alatan.lifecyclecomponents:bundle-collector-flow-adapter:$version")
+
+implementation("com.github.android-alatan.lifecyclecomponents:dagger-scope:$version")
+implementation("com.github.android-alatan.lifecyclecomponents:dagger-base-builder:$version")
+
+implementation("com.github.android-alatan.lifecyclecomponents:lifecycle-handler-compose-activity-dagger:$version")
+```
+</details>
 
 ### Example of LifecycleComponents
 ```kotlin

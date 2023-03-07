@@ -1,17 +1,16 @@
 package io.androidalatan.lifecycle.handler.internal.invoke.coroutine
 
 import androidx.annotation.VisibleForTesting
-import io.androidalatan.coroutine.api.coroutineScope
 import io.androidalatan.coroutine.dispatcher.api.DispatcherProvider
 import io.androidalatan.lifecycle.handler.api.LifecycleListener
-import java.lang.reflect.Method
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import java.lang.reflect.Method
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class CoroutineInvokerManagerImpl(
     private val dispatcherProvider: DispatcherProvider,

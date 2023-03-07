@@ -18,7 +18,7 @@ import io.androidalatan.lifecycle.handler.api.ChildLifecycleSource
 import io.androidalatan.lifecycle.handler.api.LifecycleListener
 import io.androidalatan.lifecycle.handler.compose.activator.LifecycleActivator
 import io.androidalatan.lifecycle.handler.compose.cache.ComposeCacheProvider
-import io.androidalatan.lifecycle.handler.compose.cache.LocalComposeComposeCacheOwner
+import io.androidalatan.lifecycle.handler.compose.cache.LocalComposeCacheOwner
 import io.androidalatan.lifecycle.handler.compose.cache.composeCacheProvider
 import io.androidalatan.lifecycle.handler.compose.util.LifecycleHandle
 import io.androidalatan.lifecycle.handler.compose.util.LocalLifecycleNotifierOwner
@@ -65,7 +65,7 @@ abstract class ComposableHolder(
             }
         } else {
             CompositionLocalProvider(
-                LocalComposeComposeCacheOwner provides composeCache,
+                LocalComposeCacheOwner provides composeCache,
                 LocalLifecycleSourceOwner provides this@ComposableHolder
             ) {
                 val lifecycleOwner = LocalLifecycleOwner.current

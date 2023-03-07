@@ -109,6 +109,12 @@ include(
     ":coroutine-api"
 )
 
+include(
+    ":bom-compose-app",
+    ":bom-compose-activity",
+    ":bom-compose-holder",
+)
+
 val modules = hashMapOf<String, String>()
 
 rootProject.projectDir.listFiles()

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.staticCompositionLocalOf
 
-object LocalComposeComposeCacheOwner {
+object LocalComposeCacheOwner {
 
     private val LocalComposition = staticCompositionLocalOf<ComposeCache> {
         error("No LocalCacheStoreOwner Trigger isn't provided")

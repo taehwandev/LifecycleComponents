@@ -25,16 +25,16 @@ import io.androidalatan.component.view.compose.ComposeViewInteractionTriggerImpl
 import io.androidalatan.component.view.compose.api.ComposeKeyboardController
 import io.androidalatan.compose.dialog.ComposeAlertDialogBuilderFactoryImpl
 import io.androidalatan.compose.dialog.api.ComposeAlertDialogBuilderFactory
-import io.androidalatan.lifecycle.handler.compose.activator.LifecycleActivator
 import io.androidalatan.coroutine.dispatcher.api.DispatcherProvider
 import io.androidalatan.lifecycle.handler.activity.LifecycleNotifierImpl
 import io.androidalatan.lifecycle.handler.api.LifecycleListener
 import io.androidalatan.lifecycle.handler.api.LifecycleNotifier
 import io.androidalatan.lifecycle.handler.api.LifecycleSource
+import io.androidalatan.lifecycle.handler.compose.activator.LifecycleActivator
 import io.androidalatan.lifecycle.handler.compose.activity.localowners.LocalComposeEventTriggerOwner
 import io.androidalatan.lifecycle.handler.compose.activity.localowners.LocalComposeKeyboardControllerOwner
 import io.androidalatan.lifecycle.handler.compose.cache.ComposeCacheProvider
-import io.androidalatan.lifecycle.handler.compose.cache.LocalComposeComposeCacheOwner
+import io.androidalatan.lifecycle.handler.compose.cache.LocalComposeCacheOwner
 import io.androidalatan.lifecycle.handler.compose.cache.composeCacheProvider
 import io.androidalatan.lifecycle.handler.compose.util.LifecycleHandle
 import io.androidalatan.lifecycle.handler.compose.util.LocalLifecycleNotifierOwner
@@ -143,7 +143,7 @@ abstract class ComposeLifecycleActivity private constructor(
                 LocalComposeEventTriggerOwner provides composeViewInteractionTrigger,
                 LocalLifecycleNotifierOwner provides lifecycleNotifier,
                 LocalComposeKeyboardControllerOwner provides composeKeyboardController,
-                LocalComposeComposeCacheOwner provides composeCache,
+                LocalComposeCacheOwner provides composeCache,
                 LocalLifecycleSourceOwner provides this@ComposeLifecycleActivity,
             ) {
                 LifecycleHandle {
